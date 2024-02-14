@@ -54,7 +54,7 @@ function checkUrl(){
 // changing array into string
 
 function changeString(nrUlrs){
-    let text = ""
+    let text = "";
     if(nrUlrs.length>0){
         for(let url of nrUlrs){
             text += url + "\n";
