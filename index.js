@@ -1,11 +1,23 @@
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 3000;
+const express =  require('express');
+const mongoose = require("mongoose");
+const getProductInfo = require('./utils/getProductInfo');
+const getUrls =  require('./utils/getUrls');
 
-// Define a basic route
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+const app = express();
+const PORT = process.env.PORT || 8081;
+
+mongoose.connect('mongodb://localhost:27017/scrap-data')
+    .then(() => {
+        console.log('Connected to MongoDB');
+        const mainAction = async () => {
+            await getUrls()
+            await getProductInfo();
+        }
+        mainAction();
+    })
+    .catch((error) => {
+        console.error('Error connecting to MongoDB:', error);
+    });
 
 // Start the server
 app.listen(PORT, () => {
