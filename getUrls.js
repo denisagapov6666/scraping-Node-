@@ -10,6 +10,7 @@ const newUrls = [];
 // file path 
 
 let urls_file = "./urls_data/urls.txt";
+let urls_file1 = "./urls_data/urls1.txt";
 let newProductUrls_file = "./urls_data/newProductUrls.txt";
 let removedProductUrls_file = "./urls_data/removedProductUrls.txt";
 
@@ -82,7 +83,7 @@ async function fetchBrand() {
                 }
             });
             checkUrl();
-            saveToFile(urls_file,text);
+            saveToFile(urls_file1,text);
         }
     } catch (error) {
         console.error('Error fetching data:', error);
