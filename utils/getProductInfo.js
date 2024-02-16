@@ -8,7 +8,7 @@ async function scrapeData(url) {
         const res = await axios.get(url);
         const $ = cheerio.load(res.data);
 
-        const productName = $('div.pdp-content h3').first().text().formatString(titleRaw);
+        const productName = $('div.pdp-content h3').first().text();
         const texture = $('#pdpdata-texture').text();
         const design = $('#pdpdata-design').text();
         const fiber = $('#pdpdata-fiber_content').text();
@@ -53,13 +53,17 @@ async function scrapeData(url) {
             };
 
             try {
-                const images = parsed_data.set.item;
-                const width = "642";
-                const imageUrls = images.map(image => {
-                    const height = Math.floor((642 * image.dy) / image.dx);
-                    return `https://s7d2.scene7.com/is/image/${image.i.n}?wid=${width}&hei=${height}`;
-                })
-                props.images = imageUrls;
+                if (parsed_data.set && parsed_data.set.item && Array.isArray(parsed_data.set.item)) {
+                    const images = parsed_data.set.item;
+                    const width = "642";
+                    const imageUrls = images.map(image => {
+                        const height = Math.floor((642 * image.dy) / image.dx);
+                        return `https://s7d2.scene7.com/is/image/${image.i.n}?wid=${width}&hei=${height}`;
+                    })
+                    props.images = imageUrls;
+                } else {
+                    props.images = api;
+                }
                 return props
             } catch (error) {
                 console.log('Error parsing images:', error);
@@ -69,15 +73,22 @@ async function scrapeData(url) {
         console.log('Error fetching URL:', error);
     }
 }
-
 module.exports = async () => {
-    console.log('Get Product Info:')
-    const allUrlModels = await URLModel.find({ new: true });
-    const allUrls = allUrlModels.map(urlModel => urlModel.url);
-    allUrls.forEach(async url => {
-        const productProps = await scrapeData(url);
-        const newProduct = new Product(productProps)
-        await newProduct.save();
-        setTimeout(() => { console.log('20 product is scraped.') }, 1000);
-    })
+    try {
+        console.log('Get Product Info:');
+        const allUrlModels = await URLModel.find({ new: true });
+        const allUrls = allUrlModels.map(urlModel => urlModel.url);
+        console.log(allUrls);
+        for (const url of allUrls) {
+            console.log(url);
+            const productProps = await scrapeData(url);
+            const newProduct = new Product(productProps);
+            await newProduct.save();
+            console.log('1 product is scraped.');
+        }
+        
+        console.log("End");
+    } catch (error) {
+        console.log("Error fetching URL:", error);
+    }
 }

@@ -2,52 +2,40 @@ const mongoose= require("mongoose");
 const Schema = mongoose.Schema
 const ProductSchema = new Schema({
     url: {
-        type: Schema.Types.ObjectId,
-        required: true
+        type: Schema.Types.String
     },
     category: {
-        type: String,
-        required: true
+        type: String
     },
     brandName: {
-        type: String,
-        required: true
+        type: String
     },
     productSku: {
-        type: String,
-        required: true
+        type: String
     },
     productName: {
-        type: String,
-        required: true,
+        type: String
     },
     collection: {
-        type: String,
-        required: true
+        type: String
     },
     color: {
-        type: String,
-        required: true
+        type: String
     },
     texture: {
-        type: String,
-        required: true
+        type: String
     },
     style: {
-        type: String,
-        required: true
+        type: String
     },
     fiber: {
-        type: String,
-        required: true,
+        type: String
     },
     construction: {
-        type: String,
-        required: true
+        type: String
     },
     origin: {
-        type: String,
-        required: true
+        type: String
     },
     width: {
         type: String

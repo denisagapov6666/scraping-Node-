@@ -10,7 +10,7 @@ mongoose.connect('mongodb://localhost:27017/scrap-data')
     .then(() => {
         console.log('Connected to MongoDB');
         const mainAction = async () => {
-            await getUrls()
+            await getUrls();
             await getProductInfo();
         }
         mainAction();

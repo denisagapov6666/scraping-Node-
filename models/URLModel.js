@@ -12,6 +12,10 @@ const URLSchema = new mongoose.Schema({
     new: {
         type: Boolean,
         required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 })
 
