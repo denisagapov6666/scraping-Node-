@@ -1,25 +1,26 @@
 const express =  require('express');
-const mongoose = require("mongoose");
-const getProductInfo = require('./utils/getProductInfo');
-const getUrls =  require('./utils/getUrls');
+const cors = require("cors");
+const scarpingConnectDB = require("./config/db");
 
 const app = express();
-const PORT = process.env.PORT || 8081;
 
-mongoose.connect('mongodb://localhost:27017/scrap-data')
-    .then(() => {
-        console.log('Connected to MongoDB');
-        const mainAction = async () => {
-            await getUrls();
-            await getProductInfo();
-        }
-        mainAction();
-    })
-    .catch((error) => {
-        console.error('Error connecting to MongoDB:', error);
-    });
+const routes = require("./routes/index");
+
+// scarping and db connection
+scarpingConnectDB();
+
+// cors
+app.use(cors());
+
+// initialize middleware
+app.use(express.json({ extended: false }));
+
+// use routes
+app.use('/', routes);
+
 
 // Start the server
+const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

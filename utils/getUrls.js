@@ -16,6 +16,9 @@ module.exports = async () => {
             
             // Check and update URLs in the database
             await checkUrl(urlsInLinks);
+            // const test = [
+            // "https://www.prestigemills.com/wallace-tartan"];
+            // await checkUrl(test);
         }
     } catch (error) {
         console.error('Error fetching URLs:', error);
