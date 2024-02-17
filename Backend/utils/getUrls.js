@@ -23,6 +23,7 @@ module.exports = async () => {
     } catch (error) {
         console.error('Error fetching URLs:', error);
     }
+    console.log("End getting Urls:**")
 };
 
 async function checkUrl(newUrls) {
@@ -47,7 +48,6 @@ async function checkUrl(newUrls) {
             const newUrlModel = new URLModel({
                 url,
                 deleted: false,
-                new: true
             });
             await newUrlModel.save();
         }));

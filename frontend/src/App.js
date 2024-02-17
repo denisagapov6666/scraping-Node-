@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Badge, Select } from 'antd';
+import { Table, Badge, Select, Button, Alert } from 'antd';
 import axios from 'axios';
-import { DownloadTableExcel, useDownloadExcel } from 'react-export-table-to-excel';
+import { Excel } from "antd-table-saveas-excel";
 
 const columns = [
   {
@@ -123,6 +123,7 @@ const App = () => {
   const tableRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [data, setData] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -134,41 +135,95 @@ const App = () => {
   useEffect(() => {
     setLoading(true)
     axios.get(`http://localhost:8081/get_products_info?pageSize=${pagination.pageSize}&current=${pagination.current}&filter=${filter}`)
-      .then(res => {
+      .then(async res => {
+        setPagination(prevPagination => {
+          return ({
+            ...prevPagination,
+            pageSizeOptions: res.data.total > 100 ? [20, 50, 100, res.data.total] : [20, 50, 100],
+            total: res.data.total
+          })
+        });
         setData(res.data.products)
         setLoading(false);
-        setPagination({
-          ...pagination,
-          pageSizeOptions: [20, 50, 100, res.data.total],
-          total: res.data.total
-        })
       })
   }, [pagination.pageSize, pagination.current, filter])
 
-  const handleChange = (pagination) => {
-    setPagination(pagination)
+  const handleChange = (current, pageSize) => {
+    setPagination({ ...pagination, current, pageSize })
   };
 
-  const { onDownload } = useDownloadExcel({
-    currentTableRef: tableRef.current,
-    filename: 'Users table',
-    sheet: 'Users'
-  })
+  const handleDownloadClick = () => {
+    const excel = new Excel();
+    excel
+      .addSheet("test")
+      .addColumns(columns.map(column => ({ title: column.title, dataIndex: column.dataIndex, key: column.key })))
+      .addDataSource(data.map(product => ({
+        key: product._id,
+        addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '',
+        url: product.url.url,
+        images: product.images.join(" "),
+        category: product.category,
+        brandName: product.brandName,
+        productSku: product.productSku,
+        productName: product.productName,
+        collection: product.collection,
+        color: product.color,
+        texture: product.texture,
+        fiber: product.fiber,
+        construction: product.construction,
+        origin: product.origin,
+        width: product.width,
+        repeatWidth: product.repeatWidth,
+        repeatLength: product.repeatLength,
+        rollWidth: product.rollWidth
+      })), {
+        str2Percent: true
+      })
+      .saveAs("Excel.xlsx");
+  };
+
+  const handleStartScraping = () => {
+    setLoading(true);
+    axios.get('http://localhost:8081/start_scraping')
+      .then(async res => {
+          setVisible(true);
+          setLoading(false)
+      })
+  }
+
+  const handleClose = () => {
+    setVisible(false);
+  };
 
   return (
     <>
-      <Select
-        defaultValue="all"
-        style={{ width: 120 }}
-        onChange={filter => setFilter(filter)}
-        options={[
-          { value: 'new', label: 'New' },
-          { value: 'deleted', label: 'Deleted' },
-          { value: 'all', label: 'All' },
-        ]}
-      />
-      <button onClick={()=>onDownload()}> Export excel </button>
+      {visible && (
+        <Alert
+          message="Success Scraping"
+          description="Select New and Deleted filter function for checking"
+          type="success"
+          closable
+          onClose={handleClose}
+        />
+      )}
+      <div style={{ padding: "20px", display: "flex", justifyContent: "space-between" }}>
+        <Select
+          defaultValue="all"
+          style={{ width: 120 }}
+          onChange={filter => setFilter(filter)}
+          options={[
+            { value: 'new', label: 'New' },
+            { value: 'deleted', label: 'Deleted' },
+            { value: 'all', label: 'All' },
+          ]}
+        />
+        <div>
+          <Button type='primary' danger style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
+          <Button type='primary' onClick={handleDownloadClick}>Download to Excel</Button>
+        </div>
+      </div>
       <Table
+        style={{ marginTop: "20px" }}
         ref={tableRef}
         loading={loading}
         columns={columns}
@@ -177,8 +232,10 @@ const App = () => {
           x: 1500,
           y: 500,
         }}
-        pagination={pagination}
-        onChange={handleChange}
+        pagination={{
+          ...pagination,
+          onChange: handleChange
+        }}
       />
     </>
   )

@@ -2,7 +2,8 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const URLModel = require('../models/URLModel');
 const Product = require('../models/ProductModel');
-
+const xlsx = require('xlsx');
+const fs = require('fs');
 const scrapeData = (url) => new Promise(async (resolve, reject) => {
     try {
         const res = await axios.get(url);
@@ -21,6 +22,8 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
         const collection = $('.detail-value').first().text();
 
         const variants = $('div.variant-item a');
+        let retValue = [];
+
         for (let i = 0; i < variants.length; i++) {
             const productSku = variants.eq(i).attr('data-api-sku');
             const color = variants.eq(i).attr('data-color-name');
@@ -63,7 +66,8 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
                 } else {
                     props.images = api;
                 }
-                resolve(props);
+                retValue.push(props)
+                if (i === variants.length - 1) resolve(retValue);
             } catch (error) {
                 reject(error);
                 console.log('Error parsing images:', error);
@@ -79,14 +83,22 @@ module.exports = async () => {
     try {
         console.log('Get Product Info:');
         const allUrlModels = await URLModel.find({ new: true });
-        for (const url of allUrlModels) {
-            console.log(url);
-            scrapeData(url.url).then(async productProps => {
-                const newProduct = new Product({ ...productProps, url: url._id });
-                await newProduct.save().then(console.log);
+        let count = 0;
+
+        const scrapingOneUrl = (i) => {
+            scrapeData(allUrlModels[i].url).then(async products => {
+                products.forEach(async element => {
+                    const newProduct = new Product({ ...element, url: allUrlModels[i]._id });
+                    await newProduct.save().then(() => console.log(`${++count} product is saved.`));
+                });
+                if (i < allUrlModels.length - 1) {
+                    setTimeout(() => {
+                        scrapingOneUrl(i + 1)
+                    }, 2000)
+                } else console.log("End Fetching Product")
             });
         }
-        console.log("End");
+        if(allUrlModels.length > 0) scrapingOneUrl(0)
     } catch (error) {
         console.log("Error fetching URL:", error);
     }

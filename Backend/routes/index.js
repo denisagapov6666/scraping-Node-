@@ -1,5 +1,8 @@
 const express = require('express');
 const ProductModel = require('../models/ProductModel');
+
+const getProductInfo = require('../utils/getProductInfo');
+const getUrls = require('../utils/getUrls');
 const URLModel = require('../models/URLModel');
 
 const router = express.Router();
@@ -7,10 +10,10 @@ const router = express.Router();
 const filters = {
     all: {},
     deleted: {
-        deleted: true
+        'deleted': true
     },
     new: {
-        new: true
+        'new': true
     }
 }
 
@@ -19,17 +22,24 @@ router.get("/get_products_info", async (req, res) => {
     const pageSize = req.query.pageSize;
     const filter = req.query.filter;
 
-    const availableUrlModels = await URLModel.find(filters[filter])
-    const availableUrls = availableUrlModels.map(availableUrlModel => availableUrlModel._id)
+    const urlmodels = await URLModel.find(filters[filter]);
 
     const products = await ProductModel
-        .find({ url: { $in: availableUrls } })
+        .find({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
+        .populate({ path: 'url' })
         .skip(Number(pageSize) * Number(current - 1))
-        .populate('url')
-        .limit(pageSize);
+        .limit(Number(pageSize));
 
-    const total = await ProductModel.countDocuments({ url: { $in: availableUrls } })
+    const total = await ProductModel
+        .countDocuments({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
+
     return res.status(200).json({ success: true, products, total })
+})
+
+router.get("/start_scraping", async (req, res) => {
+    await getUrls();
+    await getProductInfo();
+    return res.status(200).json({ success: true })
 })
 
 module.exports = router;
