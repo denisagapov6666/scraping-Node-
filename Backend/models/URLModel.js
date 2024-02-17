@@ -1,4 +1,4 @@
-const mongoose= require("mongoose");
+const mongoose = require("mongoose");
 
 const URLSchema = new mongoose.Schema({
     url: {
@@ -13,6 +13,6 @@ const URLSchema = new mongoose.Schema({
         type: Boolean,
         required: true
     }
-},{timestamps:true});
+}, { timestamps: true });
 
 module.exports = mongoose.model('URL', URLSchema);

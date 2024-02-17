@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const URLModel = require('../models/URLModel');
 const Product = require('../models/ProductModel');
 
-async function scrapeData(url) {
+const scrapeData = (url) => new Promise(async (resolve, reject) => {
     try {
         const res = await axios.get(url);
         const $ = cheerio.load(res.data);
@@ -34,7 +34,6 @@ async function scrapeData(url) {
             const json_data = imageData.substring(start_index, end_index);
             const parsed_data = JSON.parse(json_data);
             const props = {
-                url,
                 category: "CARPET",
                 brandName: "PRESTIGEMILLS",
                 productSku,
@@ -64,29 +63,29 @@ async function scrapeData(url) {
                 } else {
                     props.images = api;
                 }
-                return props
+                resolve(props);
             } catch (error) {
+                reject(error);
                 console.log('Error parsing images:', error);
             }
         }
     } catch (error) {
+        reject(error);
         console.log('Error fetching URL:', error);
     }
-}
+})
+
 module.exports = async () => {
     try {
         console.log('Get Product Info:');
         const allUrlModels = await URLModel.find({ new: true });
-        const allUrls = allUrlModels.map(urlModel => urlModel.url);
-        console.log(allUrls);
-        for (const url of allUrls) {
+        for (const url of allUrlModels) {
             console.log(url);
-            const productProps = await scrapeData(url);
-            const newProduct = new Product(productProps);
-            await newProduct.save();
-            console.log('1 product is scraped.');
+            scrapeData(url.url).then(async productProps => {
+                const newProduct = new Product({ ...productProps, url: url._id });
+                await newProduct.save().then(console.log);
+            });
         }
-        
         console.log("End");
     } catch (error) {
         console.log("Error fetching URL:", error);

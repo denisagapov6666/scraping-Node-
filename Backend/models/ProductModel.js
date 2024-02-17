@@ -2,7 +2,9 @@ const mongoose= require("mongoose");
 const Schema = mongoose.Schema
 const ProductSchema = new Schema({
     url: {
-        type: Schema.Types.String
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: "URL"
     },
     category: {
         type: String
