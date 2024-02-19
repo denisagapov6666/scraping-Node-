@@ -189,7 +189,6 @@ const App = () => {
         if(res.data.success){
           setVisible(true);
           setLoading(false);
-          window.location.reload();
         }
       })
   }
