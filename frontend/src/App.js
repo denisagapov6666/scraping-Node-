@@ -186,8 +186,11 @@ const App = () => {
     setLoading(true);
     axios.get('http://localhost:8081/start_scraping')
       .then(async res => {
+        if(res.data.success){
           setVisible(true);
-          setLoading(false)
+          setLoading(false);
+          window.location.reload();
+        }
       })
   }
 

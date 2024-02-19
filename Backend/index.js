@@ -9,6 +9,7 @@ const routes = require("./routes/index");
 // scarping and db connection
 scarpingConnectDB();
 
+
 // cors
 app.use(cors());
 
