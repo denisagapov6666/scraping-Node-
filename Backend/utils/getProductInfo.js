@@ -93,7 +93,7 @@ module.exports = () => {
                         const newProduct = new Product({ ...element, url: allUrlModels[i]._id });
                         await newProduct.save().then(() => console.log(`${++count} product is saved.`));
                     });
-                    if (i < allUrlModels.length) {
+                    if (i < allUrlModels.length-1) {
                         scrapingOneUrl(i + 1);
                     } else {
                         resolve();

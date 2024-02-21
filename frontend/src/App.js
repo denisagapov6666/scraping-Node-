@@ -248,13 +248,14 @@ const App = () => {
       style: {
         marginTop: '10vh',
       },
+      duration:5,
     });
   };
   const success = (msg) => {
     messageApi.open({
       type: 'success',
       content: msg,
-      duration: 10,
+      duration:5,
       style:{
         marginTop:'10vh'
       }
@@ -281,7 +282,7 @@ const App = () => {
         <div>
           <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
           <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
-          <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Data Formating</Button>
+          <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button>
         </div>
       </div>
       <Table
