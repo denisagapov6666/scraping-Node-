@@ -228,6 +228,8 @@ const App = () => {
           setVisible(true);
           setLoading(false);
           success(`${res.data.data.new} Product(s) is(are) added and ${res.data.data.removed} Product(s) is(are) removed.`);
+        } else {
+          message.error(res.data.message, 1000)
         }
       })
   }
