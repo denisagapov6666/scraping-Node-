@@ -160,7 +160,7 @@ const App = () => {
 
   useEffect(() => {
     setLoading(true)
-    axios.get(`http://localhost:8081/get_products_info?pageSize=${pagination.pageSize}&current=${pagination.current}&filter=${filter}`)
+    axios.get(`https://scrapingback.onrender.com/get_products_info?pageSize=${pagination.pageSize}&current=${pagination.current}&filter=${filter}`)
     .then(async res => {
       // Make sure `res.data.total` correctly represents the total number of items available in the backend
       setPagination(prevPagination => ({
@@ -222,7 +222,7 @@ const App = () => {
   const handleStartScraping = () => {
     setLoading(true);
     info();
-    axios.get('http://localhost:8081/start_scraping')
+    axios.get('https://scrapingback.onrender.com/start_scraping')
       .then(async res => {
         if(res.data.success){
           setVisible(true);
