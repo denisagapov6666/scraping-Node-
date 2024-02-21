@@ -4,6 +4,7 @@ const URLModel = require('../models/URLModel');
 const Product = require('../models/ProductModel');
 const xlsx = require('xlsx');
 const fs = require('fs');
+const { resolve } = require('path');
 const scrapeData = (url) => new Promise(async (resolve, reject) => {
     try {
         const res = await axios.get(url);
@@ -79,27 +80,35 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
     }
 })
 
-module.exports = async () => {
-    try {
-        console.log('Get Product Info:');
-        const allUrlModels = await URLModel.find({ new: true });
-        let count = 0;
+module.exports = () => {
+    console.log('Get Product Info:');
+    return new Promise(async resolve => {
+        try {
+            const allUrlModels = await URLModel.find({ new: true });
+            let count = 0;
 
-        const scrapingOneUrl = (i) => {
-            scrapeData(allUrlModels[i].url).then(async products => {
-                products.forEach(async element => {
-                    const newProduct = new Product({ ...element, url: allUrlModels[i]._id });
-                    await newProduct.save().then(() => console.log(`${++count} product is saved.`));
+            const scrapingOneUrl = (i) => {
+                scrapeData(allUrlModels[i].url).then(async products => {
+                    products.forEach(async element => {
+                        const newProduct = new Product({ ...element, url: allUrlModels[i]._id });
+                        await newProduct.save().then(() => console.log(`${++count} product is saved.`));
+                    });
+                    if (i < allUrlModels.length) {
+                        scrapingOneUrl(i + 1);
+                    } else {
+                        resolve();
+                    }
+
                 });
-                if (i < allUrlModels.length - 1) {
-                    setTimeout(() => {
-                        scrapingOneUrl(i + 1)
-                    }, 2000)
-                } else console.log("End Fetching Product")
-            });
+            }
+            if (allUrlModels.length > 0) {
+                scrapingOneUrl(0);
+            } else {
+                console.log("end");
+                resolve();
+            }
+        } catch (error) {
+            console.log("Error fetching URL:", error);
         }
-        if(allUrlModels.length > 0) scrapingOneUrl(0)
-    } catch (error) {
-        console.log("Error fetching URL:", error);
-    }
+    })
 }

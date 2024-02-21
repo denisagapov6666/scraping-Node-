@@ -149,7 +149,6 @@ const App = () => {
   const tableRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
-  const [visible, setVisible] = useState(false);
   const [data, setData] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -225,17 +224,20 @@ const App = () => {
     axios.get('https://scrapingback.onrender.com/start_scraping')
       .then(async res => {
         if(res.data.success){
-          setVisible(true);
           setLoading(false);
           success(`${res.data.data.new} Product(s) is(are) added and ${res.data.data.removed} Product(s) is(are) removed.`);
-        } else {
-          message.error(res.data.message, 1000)
-        }
+        } 
       })
   }
 
-  const handleClose = () => {
-    setVisible(false);
+  const formatData = () => {
+    setLoading(true);
+    axios.get('https://scrapingback.onrender.com/delete_data')
+      .then(async res => {
+        setLoading(false);
+        window.location.reload();
+        message.success(res.data.message);
+      })
   };
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -266,6 +268,7 @@ const App = () => {
       }
       <div style={{ padding: "20px", display: "flex", justifyContent: "space-between" }}>
         <Select
+          disabled={loading}
           defaultValue="all"
           style={{ width: 120 }}
           onChange={filter => setFilter(filter)}
@@ -277,7 +280,8 @@ const App = () => {
         />
         <div>
           <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
-          <Button type='primary' onClick={handleDownloadClick}>Download to Excel</Button>
+          <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
+          <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Data Formating</Button>
         </div>
       </div>
       <Table
