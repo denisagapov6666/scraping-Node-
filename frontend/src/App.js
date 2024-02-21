@@ -281,7 +281,7 @@ const App = () => {
         </div>
       </div>
       <Table
-        style={{ marginTop: "20px" }}
+        style={{ margin: "15px" }}
         ref={tableRef}
         loading={loading}
         columns={columns}
