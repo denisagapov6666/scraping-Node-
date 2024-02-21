@@ -38,12 +38,12 @@ router.get("/get_products_info", async (req, res) => {
     return res.status(200).json({ success: true, products, total })
 })
 
-const isScrapingByOtherUser = (req, res, next) => {
+const isScrapingByOtherUser = async (req, res, next) => {
     if (isScraping) {
         return res.status(503).json({ message: 'Other User is scraping now! Please wait!' });
     }
     isScraping = true;
-    next();
+    await next();
     isScraping = false;
 }
 
