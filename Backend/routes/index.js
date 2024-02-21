@@ -7,6 +7,8 @@ const URLModel = require('../models/URLModel');
 
 const router = express.Router();
 
+let isScraping = false;
+
 const filters = {
     all: {},
     deleted: {
@@ -36,10 +38,22 @@ router.get("/get_products_info", async (req, res) => {
     return res.status(200).json({ success: true, products, total })
 })
 
-router.get("/start_scraping", async (req, res) => {
-    await getUrls();
+const isScrapingByOtherUser = (req, res, next) => {
+    if (isScraping) {
+        return res.status(503).json({ message: 'Other User is scraping now! Please wait!' });
+    }
+    isScraping = true;
+    next();
+    isScraping = false;
+}
+
+router.get("/start_scraping", isScrapingByOtherUser, async (req, res) => {
+    const removed = await getUrls();
     await getProductInfo();
-    return res.status(200).json({ success: true })
+    const urlmodels = await URLModel.find({ new: true });
+    const products = await ProductModel
+        .find({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
+    return res.status(200).json({ success: true, data: { removed, new: products.length } })
 })
 
 module.exports = router;

@@ -1,36 +1,44 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Badge, Select, Button, Alert } from 'antd';
+import { Table, message, Select, Button, Alert } from 'antd';
 import axios from 'axios';
 import { Excel } from "antd-table-saveas-excel";
-
+import './App.css';
 const columns = [
   {
-    title: 'Images',
+    title: 'Thumb Image',
     dataIndex: 'images',
     key: 'images',
-    render: (images) => {
-      return <><img width="100px" height={"100px"} src={images[0]} alt={images[0]} /></>
+    render: (images,record) => {
+      return <>
+       <div style={{ position: 'relative', width: '100px', height: '100px' }}>
+          <a href={images[0]}>
+            <img width="100px" height="100px" src={images[0]} alt={images[0]} />
+            {record.addRemove === 'new' && <p style={{ position: 'absolute', top: 0, left: 0, backgroundColor: 'green', color: 'white', padding: '2px' }}>New</p>}
+            {record.addRemove === 'deleted' && <p style={{ position: 'absolute', top: 0, left: 0, backgroundColor: 'red', color: 'white', padding: '2px' }}>Removed</p>}
+          </a>
+        </div>
+      </>
     },
-    width: 120,
+    width: 130,
     fixed: 'left'
   },
   {
-    title: 'Added | Removed',
-    dataIndex: 'addRemove',
-    key: 'addRemove',
-    width: 150,
-    render: (addRemove) => {
-      if (addRemove === 'new') return <Badge status="success" text="New URL" />
-      if (addRemove === 'deleted') return <Badge status="danger" text="Deleted URL" />
-      return <Badge status="info" text="New URL" />
-    },
-    fixed: "left"
+    title: 'Product Name',
+    dataIndex: 'productName',
+    key: 'productName',
+    width: 140,
+    render:(productName,record)=>{
+      return <div style={{textAlign:'center'}}>
+        <a style={{textAlign:'center', textTransform: 'uppercase' }} href={record.url+'?sku='+record.productSku}>{productName}</a>  
+      </div>
+    }
   },
   {
-    title: 'URL',
-    width: 330,
-    dataIndex: 'url',
-    key: 'url',
+    title: 'Color',
+    dataIndex: 'color',
+    key: 'color',
+    width: 100,
+    render: color => <span style={{ textTransform: 'uppercase' }}>{color}</span>,
   },
   {
     title: 'Category',
@@ -49,23 +57,16 @@ const columns = [
     dataIndex: 'productSku',
     key: 'productSku',
     width: 150,
-  },
-  {
-    title: 'Product Name',
-    dataIndex: 'productName',
-    key: 'productName',
-    width: 150,
+    render:(productSku,record)=>{
+      return <div style={{textAlign:'center'}}>
+        <a style={{textTransform: 'uppercase' }} href={record.url+'?sku='+productSku}>{productSku}</a>  
+      </div>
+    }
   },
   {
     title: 'Collection',
     dataIndex: 'collection',
     key: 'collection',
-    width: 150,
-  },
-  {
-    title: 'Color',
-    dataIndex: 'color',
-    key: 'color',
     width: 150,
   },
   {
@@ -116,6 +117,31 @@ const columns = [
     key: 'rollWidth',
     width: 150,
   },
+  {
+    title: 'Other Images',
+    dataIndex: 'images',
+    key: 'images',
+    render: (images) => {
+      if (images.length <= 1) {
+        return null; // If there's only one image or no image, return null
+      }
+  
+      // Render all images except the first one inside an anchor tag with a unique key
+      return (
+        <div>
+          {images.slice(1).map((image, index) => (
+            // Use the combination of image URL and index as a unique key
+            <a key={image + index} href={image}>
+              <img width="40px" height="40px" src={image} alt={`product-${index}`} style={{ marginLeft: '5px' }} />
+            </a>
+          ))}
+        </div>
+      );
+    },
+    width: 130,
+    fixed:'right'
+  }
+  
 ];
 
 const App = () => {
@@ -135,17 +161,17 @@ const App = () => {
   useEffect(() => {
     setLoading(true)
     axios.get(`http://localhost:8081/get_products_info?pageSize=${pagination.pageSize}&current=${pagination.current}&filter=${filter}`)
-      .then(async res => {
-        setPagination(prevPagination => {
-          return ({
-            ...prevPagination,
-            pageSizeOptions: res.data.total > 100 ? [20, 50, 100, res.data.total] : [20, 50, 100],
-            total: res.data.total
-          })
-        });
-        setData(res.data.products)
-        setLoading(false);
-      })
+    .then(async res => {
+      // Make sure `res.data.total` correctly represents the total number of items available in the backend
+      setPagination(prevPagination => ({
+        ...prevPagination,
+        total: res.data.total, // This should be the total number of items, not the number of items in the current page
+        pageSizeOptions: res.data.total > 100 ? [20, 50, 100, res.data.total] : [20, 50, 100],
+      }));
+      setData(res.data.products);
+      setLoading(false);
+    });
+
   }, [pagination.pageSize, pagination.current, filter])
 
   const handleChange = (current, pageSize) => {
@@ -154,41 +180,54 @@ const App = () => {
 
   const handleDownloadClick = () => {
     const excel = new Excel();
-    excel
-      .addSheet("test")
-      .addColumns(columns.map(column => ({ title: column.title, dataIndex: column.dataIndex, key: column.key })))
-      .addDataSource(data.map(product => ({
+  
+    // Define columns for Excel
+    const excelColumns = columns
+      .filter(column => column.title !== 'Thumb Image' && column.title !== 'Other Images') // Exclude Thumb Image and Other Images columns
+      .map(column => ({ title: column.title, dataIndex: column.dataIndex, key: column.key }));
+  
+    // Add image columns
+    for (let i = 0; i <= 5; i++) {
+      excelColumns.push({ title: `Image ${i + 1}`, dataIndex: `image_${i}`, key: `image_${i}` });
+    }
+  
+    // Add data source
+    const excelDataSource = data.map(product => {
+      const rowData = {
         key: product._id,
         addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '',
         url: product.url.url,
-        images: product.images.join(" "),
-        category: product.category,
-        brandName: product.brandName,
-        productSku: product.productSku,
-        productName: product.productName,
-        collection: product.collection,
-        color: product.color,
-        texture: product.texture,
-        fiber: product.fiber,
-        construction: product.construction,
-        origin: product.origin,
-        width: product.width,
-        repeatWidth: product.repeatWidth,
-        repeatLength: product.repeatLength,
-        rollWidth: product.rollWidth
-      })), {
-        str2Percent: true
-      })
-      .saveAs("Excel.xlsx");
+        ...product
+      };
+  
+      // Populate image data for each image column
+      for (let i = 0; i <= 5; i++) {
+        if (product.images[i]) {
+          rowData[`image_${i}`] = product.images[i];
+        } else {
+          rowData[`image_${i}`] = ''; // Populate empty string if no image available
+        }
+      }
+  
+      return rowData;
+    });
+  
+    // Add data to the Excel instance
+    excel.addSheet('Products').addColumns(excelColumns).addDataSource(excelDataSource, { str2Percent: true });
+  
+    // Save the Excel file
+    excel.saveAs('Products.xlsx');
   };
-
+  
   const handleStartScraping = () => {
     setLoading(true);
+    info();
     axios.get('http://localhost:8081/start_scraping')
       .then(async res => {
         if(res.data.success){
           setVisible(true);
           setLoading(false);
+          success(`${res.data.data.new} Product(s) is(are) added and ${res.data.data.removed} Product(s) is(are) removed.`);
         }
       })
   }
@@ -196,18 +235,33 @@ const App = () => {
   const handleClose = () => {
     setVisible(false);
   };
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const info = () => {
+    messageApi.info({
+      content: "Please wait while we process it. You will be notified once it's completed",
+      className: 'custom-class',
+      style: {
+        marginTop: '10vh',
+      },
+    });
+  };
+  const success = (msg) => {
+    messageApi.open({
+      type: 'success',
+      content: msg,
+      duration: 10,
+      style:{
+        marginTop:'10vh'
+      }
+    });
+  };
 
   return (
     <>
-      {visible && (
-        <Alert
-          message="Success Scraping"
-          description="Select New and Deleted filter function for checking"
-          type="success"
-          closable
-          onClose={handleClose}
-        />
-      )}
+      {
+        contextHolder
+      }
       <div style={{ padding: "20px", display: "flex", justifyContent: "space-between" }}>
         <Select
           defaultValue="all"
@@ -220,7 +274,7 @@ const App = () => {
           ]}
         />
         <div>
-          <Button type='primary' danger style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
+          <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
           <Button type='primary' onClick={handleDownloadClick}>Download to Excel</Button>
         </div>
       </div>
