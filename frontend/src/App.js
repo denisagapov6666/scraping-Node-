@@ -283,7 +283,7 @@ const App = () => {
         <div>
           <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
           <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
-          {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
+          <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button>
         </div>
       </div>
       <Table
