@@ -13,7 +13,8 @@ const columns = [
       return <div style={{textAlign:'center'}}>
         <a style={{textTransform: 'uppercase' }} href={record.url+'?sku='+productSku}>{productSku}</a>  
       </div>
-    }
+    },
+    fixed:"left"
   },
   {
     title: 'Product Name',
@@ -103,10 +104,11 @@ const columns = [
     title: 'Other Images',
     dataIndex: 'images',
     key: 'images',
+    width: 230,
     render: (images) => {
       // Render all images except the first one inside an anchor tag with a unique key
       return (
-        <div>
+        <div style={{width:"100px", textAlign:"center"}}>
           {images.slice(0).map((image, index) => (
             // Use the combination of image URL and index as a unique key
             <a key={image + index} href={image} target="_blank" rel="noopener noreferrer">
@@ -116,7 +118,7 @@ const columns = [
         </div>
       );
     },
-    width: 130,
+    fixed:"right",
   }
   
 ];
@@ -269,9 +271,6 @@ const App = () => {
         loading={loading}
         columns={columns}
         dataSource={data.map(product => ({ ...product, url: product.url.url, key: product._id, addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '' }))}
-        scroll={{
-          x: 1500
-        }}
         pagination={{
           ...pagination,
           onChange: handleChange
