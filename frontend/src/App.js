@@ -11,7 +11,7 @@ const columns = [
     width: 150,
     render:(productSku,record)=>{
       return <div style={{textAlign:'center'}}>
-        <a style={{textTransform: 'uppercase' }} href={record.url+'?sku='+productSku}>{productSku}</a>  
+        <a style={{textTransform: 'uppercase' }} href={record.url+'?sku='+productSku} target="_blank" rel="noopener noreferrer">{productSku}</a>  
       </div>
     },
     fixed:"left"
@@ -23,7 +23,7 @@ const columns = [
     width: 140,
     render:(productName,record)=>{
       return <div style={{textAlign:'center'}}>
-        <a style={{textAlign:'center', textTransform: 'uppercase' }} href={record.url+'?sku='+record.productSku}>{productName}</a>  
+        <a  style={{textAlign:'center', textTransform: 'uppercase' }} href={record.url+'?sku='+record.productSku} target="_blank" rel="noopener noreferrer">{productName}</a>  
       </div>
     }
   },
