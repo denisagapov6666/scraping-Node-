@@ -4,17 +4,6 @@ const ProductModel = require('../models/ProductModel');
 const getProductInfo = require('../utils/getProductInfo');
 const getUrls = require('../utils/getUrls');
 const URLModel = require('../models/URLModel');
-const nodemailer = require("nodemailer");
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.net",
-    port: 465,
-    secure: true,
-    auth: {
-      // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-      user: "denisagapov6666@gmail.com",
-      pass: "Climax123!2",
-    },
-  });
 
 const router = express.Router();
 
@@ -65,15 +54,7 @@ router.get("/start_scraping", isScrapingByOtherUser, async (req, res) => {
     const products = await ProductModel
         .find({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
     
-    const info = await transporter.sendMail({
-        from: 'denisagapov6666@gmail.com', // sender address
-        to: "nicolas.edwards0822@gmail.com", // list of receivers
-        subject: "Hello ✔", // Subject line
-        text: "Hello world?", // plain text body
-        html: "<b>Hello world?</b>", // html body
-        });
-    
-        console.log("Message sent: %s", info.messageId);
+
     return res.status(200).json({ success: true, data: { removed, new: products.length } })
 })
 router.get("/delete_data", async (req, res) => {
