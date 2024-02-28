@@ -5,22 +5,15 @@ import { Excel } from "antd-table-saveas-excel";
 import './App.css';
 const columns = [
   {
-    title: 'Thumb Image',
-    dataIndex: 'images',
-    key: 'images',
-    render: (images,record) => {
-      return <>
-       <div style={{ position: 'relative', width: '100px', height: '100px' }}>
-          <a href={images[0]}>
-            <img width="100px" height="100px" src={images[0]} alt={images[0]} />
-            {record.addRemove === 'new' && <p style={{ position: 'absolute', top: 0, left: 0, backgroundColor: 'green', color: 'white', padding: '2px' }}>New</p>}
-            {record.addRemove === 'deleted' && <p style={{ position: 'absolute', top: 0, left: 0, backgroundColor: 'red', color: 'white', padding: '2px' }}>Removed</p>}
-          </a>
-        </div>
-      </>
-    },
-    width: 130,
-    fixed: 'left'
+    title: 'Product Sku',
+    dataIndex: 'productSku',
+    key: 'productSku',
+    width: 150,
+    render:(productSku,record)=>{
+      return <div style={{textAlign:'center'}}>
+        <a style={{textTransform: 'uppercase' }} href={record.url+'?sku='+productSku}>{productSku}</a>  
+      </div>
+    }
   },
   {
     title: 'Product Name',
@@ -51,17 +44,6 @@ const columns = [
     dataIndex: 'brandName',
     key: 'brandName',
     width: 150,
-  },
-  {
-    title: 'Product Sku',
-    dataIndex: 'productSku',
-    key: 'productSku',
-    width: 150,
-    render:(productSku,record)=>{
-      return <div style={{textAlign:'center'}}>
-        <a style={{textTransform: 'uppercase' }} href={record.url+'?sku='+productSku}>{productSku}</a>  
-      </div>
-    }
   },
   {
     title: 'Collection',
@@ -122,24 +104,19 @@ const columns = [
     dataIndex: 'images',
     key: 'images',
     render: (images) => {
-      if (images.length <= 1) {
-        return null; // If there's only one image or no image, return null
-      }
-  
       // Render all images except the first one inside an anchor tag with a unique key
       return (
         <div>
-          {images.slice(1).map((image, index) => (
+          {images.slice(0).map((image, index) => (
             // Use the combination of image URL and index as a unique key
-            <a key={image + index} href={image}>
-              <img width="40px" height="40px" src={image} alt={`product-${index}`} style={{ marginLeft: '5px' }} />
+            <a key={image + index} href={image} target="_blank" rel="noopener noreferrer">
+              <img width="40px" height="40px" src={image} alt={`product-${index}`} style={{ margin: '3px' }} />
             </a>
           ))}
         </div>
       );
     },
     width: 130,
-    fixed:'right'
   }
   
 ];
@@ -293,8 +270,7 @@ const App = () => {
         columns={columns}
         dataSource={data.map(product => ({ ...product, url: product.url.url, key: product._id, addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '' }))}
         scroll={{
-          x: 1500,
-          y: 500,
+          x: 1500
         }}
         pagination={{
           ...pagination,
