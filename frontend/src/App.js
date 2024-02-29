@@ -1,20 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, message, Select, Button, Alert } from 'antd';
+import { Table, message, Select, Button, Input, DatePicker} from 'antd';
+import {CheckCircleOutlined,ExclamationCircleOutlined,StopOutlined} from '@ant-design/icons';
 import axios from 'axios';
 import { Excel } from "antd-table-saveas-excel";
-import './App.css';
+import moment from 'moment';
+
+import 'antd/dist/reset.css';
+
+const { RangePicker } = DatePicker;
+const { Option } = Select;
+
+
 const columns = [
   {
     title: 'Product Sku',
     dataIndex: 'productSku',
     key: 'productSku',
     width: 150,
-    render:(productSku,record)=>{
-      return <div style={{textAlign:'center'}}>
-        <a style={{textTransform: 'uppercase' }} href={record.url+'?sku='+productSku} target="_blank" rel="noopener noreferrer">{productSku}</a>  
-      </div>
+    render: (text, record) => {
+      const { productSku, url, addRemove } = record;
+      return (
+        <div style={{ textAlign: 'center', display: "flex" }}>
+          {addRemove === "new" && <CheckCircleOutlined style={{ color: "green" }} />}
+          {addRemove === "deleted" && <StopOutlined style={{ color: "red" }} />}
+          {addRemove !== "new" && addRemove !== "deleted" && <ExclamationCircleOutlined style={{ color: "blue" }} />}
+          &nbsp;<a style={{ textTransform: 'uppercase' }} href={url + '?sku=' + productSku} target="_blank" rel="noopener noreferrer">{productSku}</a>
+        </div>
+      );
     },
-    fixed:"left"
+    fixed: "left"
   },
   {
     title: 'Product Name',
@@ -51,6 +65,15 @@ const columns = [
     dataIndex: 'collection',
     key: 'collection',
     width: 150,
+    filters: [
+      { text: 'prestige mills', value: 'prestige mills' },
+      { text: 'weave tuft', value: 'weave tuft' },
+      { text: 'missoni home', value: 'missoni home' },
+      { text: 'mantra', value: 'mantra' },
+      { text: 'ashley stark home', value: 'ashley stark home' },
+    ],
+    onFilter: (value, record) => record.brand === value,
+    render: (text) => <span>{text}</span>,
   },
   {
     title: 'Texture',
@@ -101,6 +124,12 @@ const columns = [
     width: 150,
   },
   {
+    title: 'Date',
+    dataIndex: 'date',
+    key: 'date',
+    width: 150,
+  },
+  {
     title: 'Other Images',
     dataIndex: 'images',
     key: 'images',
@@ -129,16 +158,16 @@ const App = () => {
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [originData,setOriginData] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 20,
     pageSizeOptions: [20, 50, 100]
   })
-  const [filter, setFilter] = useState('all')
 
   useEffect(() => {
     setLoading(true)
-    axios.get(`https://scrapingback.onrender.com/get_products_info?pageSize=${pagination.pageSize}&current=${pagination.current}&filter=${filter}`)
+    axios.get(`http://localhost:8081/get_products_info`)
     .then(async res => {
       // Make sure `res.data.total` correctly represents the total number of items available in the backend
       setPagination(prevPagination => ({
@@ -146,11 +175,12 @@ const App = () => {
         total: res.data.total, // This should be the total number of items, not the number of items in the current page
         pageSizeOptions: res.data.total > 100 ? [20, 50, 100, res.data.total] : [20, 50, 100],
       }));
+      setOriginData(res.data.products);
       setData(res.data.products);
       setLoading(false);
     });
 
-  }, [pagination.pageSize, pagination.current, filter])
+  },[])
 
   const handleChange = (current, pageSize) => {
     setPagination({ ...pagination, current, pageSize })
@@ -197,22 +227,96 @@ const App = () => {
     excel.saveAs('Products.xlsx');
   };
   
-  const handleStartScraping = () => {
+  const handleStartScraping = async () => {
     setLoading(true);
     info();
-    axios.get('https://scrapingback.onrender.com/start_scraping')
+    axios.get('http://localhost:8081/start_scraping')
       .then(async res => {
         if(res.data.success){
           setLoading(false);
           success(`${res.data.data.new} Product(s) is(are) added and ${res.data.data.removed} Product(s) is(are) removed.`);
-          setTimeout(window.location.reload(),3000);
+          // await setTimeout(window.location.reload(),3000);
         } 
       })
   }
-
+  const changeFilter = (filter) =>{
+    let filteredData = originData;
+    if (filter === "new") {
+      filteredData = originData.filter(element => element.url.new === true);
+    } else if (filter === "deleted") {
+      filteredData = originData.filter(element => element.url.deleted === true);
+    }else if(filter === "all"){
+      filteredData = originData;
+    }
+    setPagination(prevPagination => ({
+      ...prevPagination,
+      current: 1, // Reset pagination to the first page
+      total: filteredData.length // Update total count based on filtered data length
+    }));
+    setData(filteredData);
+  }
+  const handleDateRangeChange = (dates) => {
+    if (!dates || dates.length !== 2) {
+      setData(originData);
+      return;
+    }
+  
+    const [start, end] = dates;
+  
+    const startDate = start.startOf('day').toDate();
+    const endDate = end.endOf('day').toDate();
+  
+    const filtered = originData.filter((item) => {
+      const itemDate = moment(item.url.updatedAt).toDate();
+      return itemDate >= startDate && itemDate <= endDate;
+    });
+  
+    setPagination(prevPagination => ({
+      ...prevPagination,
+      current: 1,
+      total: filtered.length
+    }));
+    setData(filtered);
+  };
+  
+  
+  const handleSearch = (e) => {
+    let filteredData = originData;
+    const value = e.target.value.toLowerCase();
+    const filtered = filteredData.filter((item) =>
+      item.productSku.toLowerCase().includes(value) ||
+      item.productName.toLowerCase().includes(value)||
+      item.origin.toLowerCase().includes(value)||
+      item.fiber.toLowerCase().includes(value)||
+      item.color.toLowerCase().includes(value)||
+      item.width.toLowerCase().includes(value)||
+      item.repeatWidth.toLowerCase().includes(value)||
+      item.repeatLength.toLowerCase().includes(value)
+    );
+    setPagination(prevPagination => ({
+      ...prevPagination,
+      current: 1, // Reset pagination to the first page
+      total: filtered.length // Update total count based on filtered data length
+    }));
+    setData(filtered);
+  };
+  const handleBrandChange = (value) => {
+    let filteredData = originData;
+    if (value === 'all') {
+      setData(filteredData);
+      return;
+    }
+    const filtered = filteredData.filter((item) => item.collection === value);
+    setPagination(prevPagination => ({
+      ...prevPagination,
+      current: 1, // Reset pagination to the first page
+      total: filtered.length // Update total count based on filtered data length
+    }));
+    setData(filtered);
+  };
   const formatData = () => {
     setLoading(true);
-    axios.get('https://scrapingback.onrender.com/delete_data')
+    axios.get('http://localhost:8081/delete_data')
       .then(async res => {
         setLoading(false);
         message.success(res.data.message);
@@ -247,30 +351,49 @@ const App = () => {
       {
         contextHolder
       }
-      <div style={{ padding: "20px", display: "flex", justifyContent: "space-between" }}>
-        <Select
-          disabled={loading}
-          defaultValue="all"
-          style={{ width: 120 }}
-          onChange={filter => setFilter(filter)}
-          options={[
-            { value: 'new', label: 'New' },
-            { value: 'deleted', label: 'Deleted' },
-            { value: 'all', label: 'All' },
-          ]}
-        />
-        <div>
+      <div style={{ padding: "20px",paddingBottom:"0", justifyContent: "space-between" }}>
+        <div style={{textAlign:"right"}}>
           <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
           <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
           <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button>
         </div>
+        <div>
+          <Select
+            disabled={loading}
+            defaultValue="all"
+            style={{ width: 120 }}
+            onChange={(filter) => changeFilter(filter)}
+            options={[
+              { value: 'new', label: 'New' },
+              { value: 'deleted', label: 'Deleted' },
+              { value: 'all', label: 'All' },
+            ]}
+          />
+          <Input
+          disabled = {loading}
+          placeholder="Search Name or SKU"
+          onChange={handleSearch}
+          style={{ width: 200}}
+        />
+        <RangePicker onChange={handleDateRangeChange} disabled={loading}/>
+        <Select defaultValue="all" disabled = {loading} onChange={handleBrandChange} style={{ width: 200}}>
+          <Option value="all">All Collection</Option>
+          <Option value="prestige mills">Prestige Mills</Option>
+          <Option value="weave tuft">Weave Tuft</Option>
+          <Option value="mantra">Manta</Option>
+          <Option value="ashley stark home">Ashley Stark Home</Option>
+          <Option value="missoni home">Missoni Home</Option>
+        </Select>
+
+        </div>
+        
       </div>
       <Table
         style={{ margin: "15px" }}
         ref={tableRef}
         loading={loading}
         columns={columns}
-        dataSource={data.map(product => ({ ...product, url: product.url.url, key: product._id, addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '' }))}
+        dataSource={data.map(product => ({ ...product, date:moment(product.url.updatedAt).format("YYYY-MM-DD"),url: product.url.url, key: product._id, addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '' }))}
         pagination={{
           ...pagination,
           onChange: handleChange

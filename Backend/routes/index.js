@@ -9,28 +9,26 @@ const router = express.Router();
 
 let isScraping = false;
 
-const filters = {
-    all: {},
-    deleted: {
-        'deleted': true
-    },
-    new: {
-        'new': true
-    }
-}
+// const filters = {
+//     all: {},
+//     deleted: {
+//         'deleted': true
+//     },
+//     new: {
+//         'new': true
+//     }
+// }
 
 router.get("/get_products_info", async (req, res) => {
-    const current = req.query.current;
-    const pageSize = req.query.pageSize;
-    const filter = req.query.filter;
+    // const current = req.query.current;
+    // const pageSize = req.query.pageSize;
+    // const filter = req.query.filter;
 
-    const urlmodels = await URLModel.find(filters[filter]);
+    const urlmodels = await URLModel.find();
 
     const products = await ProductModel
         .find({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
-        .populate({ path: 'url' })
-        .skip(Number(pageSize) * Number(current - 1))
-        .limit(Number(pageSize));
+        .populate({ path: 'url' });
 
     const total = await ProductModel
         .countDocuments({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
