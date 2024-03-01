@@ -1,12 +1,26 @@
-.logi{
-  position: 'relative';
-  width: '100px';
-  height: '100px';
+.trigger {
+  padding: 0 24px;
+  font-size: 18px;
+  line-height: 64px;
+  cursor: pointer;
+  transition: color 0.3s;
 }
-.logimagestate{
-  position: 'absolute';
-  top: 0;
-  left: 0;
-  color: 'white'; 
-  padding: '2px';
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.logo {
+  height: 55px;
+
+  margin: 30px 16px;
+  text-align: center;
+  /* background: rgba(255, 255, 255, 0.3); */
+  background-image: url("../public/web-scraper-logo-1B3B41632A-seeklogo.com.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.site-layout .site-layout-background {
+  background: #fff;
 }

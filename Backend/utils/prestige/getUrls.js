@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const URLModel = require('../models/URLModel');
-const ProductModel = require('../models/ProductModel');
+const URLModel = require('../../models/prestige/URLModel');
+const ProductModel = require('../../models/prestige/ProductModel');
 
 module.exports = async () => {
     console.log("Get Urls:");
