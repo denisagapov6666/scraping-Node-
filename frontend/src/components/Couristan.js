@@ -328,7 +328,7 @@ const Couristan = () => {
       {
         contextHolder
       }
-      <div style={{ padding: "0px, 20px", justifyContent: "space-between", display:"flex" }}>
+      <div style={{ padding: "0px 20px", justifyContent: "space-between", display:"flex" }}>
         <div>
           <Select
             disabled={loading}

@@ -24,3 +24,32 @@
 .site-layout .site-layout-background {
   background: #fff;
 }
+/* App.css */
+
+/* Set a fixed position for the sidebar */
+.ant-layout-sider {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+ 
+}
+
+/* Set a fixed position for the header */
+.ant-layout-header {
+  position: fixed;
+  width: 100%;
+  z-index: 101;
+  background-color: white!important;
+}
+
+/* Adjust content margin to avoid overlap with fixed sidebar and header */
+
+
+/* Make the content scrollable */
+.site-layout-content {
+  overflow-y: auto;
+  margin-top: 80px;
+  height: calc(100vh - 80px); /* Adjust this value based on the height of your header */
+}
