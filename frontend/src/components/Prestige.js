@@ -363,12 +363,7 @@ const Prestige = () => {
       {
         contextHolder
       }
-      <div style={{ padding: "20px",paddingBottom:"0", justifyContent: "space-between" }}>
-        <div style={{textAlign:"right"}}>
-          <Button type='primary' disabled={loading} style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
-          <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
-          <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button>
-        </div>
+      <div style={{ padding: "0px 20px", justifyContent: "space-between", display:"flex"}}>
         <div>
           <Select
             disabled={loading}
@@ -398,7 +393,11 @@ const Prestige = () => {
         </Select>
 
         </div>
-        
+        <div style={{textAlign:"right"}}>
+          <Button type='primary' disabled={loading} style={{ margin: "0px 10px"}} onClick={handleStartScraping}>Start Scraping</Button>
+          <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
+          {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
+        </div>
       </div>
       <Table
         style={{ margin: "15px",overflow:'auto' }}

@@ -14,7 +14,7 @@ import {
 import { Layout, Menu } from 'antd';
 
 
-const { Header, Sider,Footer, Content } = Layout;
+const { Header, Sider, Content } = Layout;
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -47,11 +47,8 @@ const App = () => {
           <Content
             className="site-layout-background"
             style={{
-              margin: '24px 16px',
-              padding: 24,
               minHeight: 280,
               overflow:"auto",
-              height: `calc(100vh - 179px)`
             }}
             >
               <Routes>
@@ -59,7 +56,6 @@ const App = () => {
                 <Route path = "/couristan" exact element={<Couristan/>}/>
               </Routes>
           </Content>
-        <Footer style={{ textAlign: 'center'}}>Web Scraper ©2024 Created by Denis Agapov</Footer>
         </Layout>
       </Router>
     </Layout>
