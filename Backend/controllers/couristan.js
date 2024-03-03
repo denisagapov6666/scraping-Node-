@@ -1,9 +1,9 @@
-const ProductModel = require('../models/prestige/ProductModel');
-const URLModel = require('../models/prestige/URLModel');
+const ProductModel = require('../models/couristan/ProductModel');
+const URLModel = require('../models/couristan/URLModel');
 const RequestModel = require("../models/RequestModel");
 
-const getProductInfo = require('../utils/prestige/getProductInfo');
-const getUrls = require('../utils/prestige/getUrls');
+const getProductInfo = require('../utils/couristan/getProductInfo');
+const getUrls = require('../utils/couristan/getUrls');
 
 
 

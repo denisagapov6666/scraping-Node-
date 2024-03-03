@@ -2,8 +2,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const URLModel = require('../../models/prestige/URLModel');
 const Product = require('../../models/prestige/ProductModel');
-const xlsx = require('xlsx');
-const fs = require('fs');
+
 const { resolve } = require('path');
 const scrapeData = (url) => new Promise(async (resolve, reject) => {
     try {

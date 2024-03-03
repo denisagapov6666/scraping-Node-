@@ -59,7 +59,7 @@ const App = () => {
                 <Route path = "/couristan" exact element={<Couristan/>}/>
               </Routes>
           </Content>
-        <Footer style={{ textAlign: 'center' }}>Web Scraper ©2024 Created by Denis Agapov</Footer>
+        <Footer style={{ textAlign: 'center'}}>Web Scraper ©2024 Created by Denis Agapov</Footer>
         </Layout>
       </Router>
     </Layout>

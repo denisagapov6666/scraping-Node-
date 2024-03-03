@@ -1,9 +1,8 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const URLModel = require('../../models/prestige/URLModel');
-const ProductModel = require('../../models/prestige/ProductModel');
-
-const checkUrl = (newUrls) => new Promise(async (resolve, reject) => {
+const URLModel = require('../../models/couristan/URLModel');
+const ProductModel = require('../../models/couristan/ProductModel');
+const checkUrl = async (newUrls) => {
     try {
         const allUrlModels = await URLModel.find();
         const allUrls = allUrlModels.map(urlModel => urlModel.url);
@@ -33,33 +32,38 @@ const checkUrl = (newUrls) => new Promise(async (resolve, reject) => {
             await newUrlModel.save();
         }));
 
-        resolve(removedProductsLength)
+        return removedProductsLength;
     } catch (error) {
         console.error('Error updating URLs in database:', error);
     }
-})
+};
 module.exports = async () => {
-    console.log("Get Urls:");
+    let pageIndex = 1;
     try {
-        // Fetch URLs from the homepage
-        const URL = "https://www.prestigemills.com/products-collection.html";
-        const response = await axios.get(URL);
-        const $ = cheerio.load(response.data);
-        const links = $(".product-feature .product-link");
+        const urls = [];
+        for (let x = 0; x < 99; x++) {
+            console.log('fetching page ' + pageIndex);
+            const URL = "https://www.couristan.com/wp-admin/admin-ajax.php";
+            const form_data = new URLSearchParams();
+            form_data.append('action', 'max_filter_products');
+            form_data.append('form_data', 'product_tag%3Abroadloom=&paged=' + pageIndex + '&filter-perpage=96&filter-orderby=');
 
-        if (links.length > 0) {
-            const urlsInLinks = links.toArray().map(element => $(element).attr('href'));
+            const response = await axios.post(URL, form_data);
+            const $ = cheerio.load(response.data);
+            const links = $("div.product-meta a");
 
-            // Check and update URLs in the database
-            const data = await checkUrl(urlsInLinks);
-            return data;
-            // const test = [
-            // "https://www.prestigemills.com/wallace-tartan"];
-            // await checkUrl(test);
+            if (links.length > 0) {
+                links.each((index, element) => {
+                    urls.push($(element).attr('href'));
+                });
+            } else {
+                break;
+            }
+            pageIndex++;
         }
+        return checkUrl(urls)
     } catch (error) {
-        console.error('Error fetching URLs:', error);
+        console.error('Error fetching brands:', error);
     }
-    console.log("End getting Urls:**")
 };
 

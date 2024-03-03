@@ -130,7 +130,7 @@ const columns = [
     width: 150,
   },
   {
-    title: 'Other Images',
+    title: 'Images',
     dataIndex: 'images',
     key: 'images',
     width: 230,
@@ -207,6 +207,7 @@ const Prestige = () => {
         url: product.url.url,
         ...product
       };
+      rowData.date = moment(product.url.updatedAt).format("YYYY-MM-DD");
   
       // Populate image data for each image column
       for (let i = 0; i <= 5; i++) {
@@ -221,10 +222,10 @@ const Prestige = () => {
     });
   
     // Add data to the Excel instance
-    excel.addSheet('Products').addColumns(excelColumns).addDataSource(excelDataSource, { str2Percent: true });
+    excel.addSheet('Prestige').addColumns(excelColumns).addDataSource(excelDataSource, { str2Percent: true });
   
     // Save the Excel file
-    excel.saveAs('Products.xlsx');
+    excel.saveAs('Prestige.xlsx');
   };
   
   const handleStartScraping = async () => {
@@ -234,8 +235,19 @@ const Prestige = () => {
       .then(async res => {
         if(res.data.success){
           setLoading(false);
+          setData(res.data.data.products);
+          setOriginData(res.data.data.products);
           success(`${res.data.data.new} Product(s) is(are) added and ${res.data.data.removed} Product(s) is(are) removed.`);
           // await setTimeout(window.location.reload(),3000);
+        }else{
+          setLoading(false);
+          message.warning({
+            content:res.data.message,
+            style:{
+              marginTop:"20vh"
+            },
+            duration:5
+          });
         } 
       })
   }
@@ -353,7 +365,7 @@ const Prestige = () => {
       }
       <div style={{ padding: "20px",paddingBottom:"0", justifyContent: "space-between" }}>
         <div style={{textAlign:"right"}}>
-          <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
+          <Button type='primary' disabled={loading} style={{ margin: "10px" }} onClick={handleStartScraping}>Start Scraping</Button>
           <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
           <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button>
         </div>
