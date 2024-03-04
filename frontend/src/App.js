@@ -21,7 +21,6 @@ const App = () => {
   const [headerTitle,setHeaderTitle] = useState("Prestige");
   const changeHeader = (title,e) =>{
     console.log(title);
-    e.preventDefault();
     setHeaderTitle(title)
   }
 
@@ -59,7 +58,7 @@ const App = () => {
             className="site-layout-content"
             style={{
               minHeight: 280,
-              overflow:"auto",
+              // overflow:"auto",
             }}
             >
               <Routes>

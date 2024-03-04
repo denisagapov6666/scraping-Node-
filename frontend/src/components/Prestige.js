@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, message, Select, Button, Input, DatePicker} from 'antd';
-import {CheckCircleOutlined,ExclamationCircleOutlined,StopOutlined} from '@ant-design/icons';
 import axios from 'axios';
 import { Excel } from "antd-table-saveas-excel";
 import moment from 'moment';
@@ -20,11 +19,22 @@ const columns = [
     render: (text, record) => {
       const { productSku, url, addRemove } = record;
       return (
-        <div style={{ textAlign: 'center', display: "flex" }}>
-          {addRemove === "new" && <CheckCircleOutlined style={{ color: "green" }} />}
-          {addRemove === "deleted" && <StopOutlined style={{ color: "red" }} />}
-          {addRemove !== "new" && addRemove !== "deleted" && <ExclamationCircleOutlined style={{ color: "blue" }} />}
-          &nbsp;<a style={{ textTransform: 'uppercase' }} href={url + '?sku=' + productSku} target="_blank" rel="noopener noreferrer">{productSku}</a>
+        <div style={{ position: 'relative', width: 'fit-content', height: 'fit-content' }}>
+          <span 
+            style={{
+              position: 'absolute',
+              top: "-50px",
+              left: 0,
+              // transform: 'rotate(-45deg)',
+              transformOrigin: 'top left',
+              backgroundColor: addRemove === "new" ? 'green' : addRemove === "deleted" ? 'red' : '',
+              padding: '2px 5px',
+              color: 'white',
+            }}
+          >
+            {addRemove === "new" ? 'New' : addRemove === "deleted" ? 'Removed':""}
+          </span>
+          <a style={{ textTransform: 'uppercase', marginLeft: 20 }} href={url + '?sku=' + productSku} target="_blank" rel="noopener noreferrer">{productSku}</a>
         </div>
       );
     },
@@ -326,15 +336,15 @@ const Prestige = () => {
     }));
     setData(filtered);
   };
-  const formatData = () => {
-    setLoading(true);
-    axios.get('https://scrapingback.onrender.com/prestige/delete_data')
-      .then(async res => {
-        setLoading(false);
-        message.success(res.data.message);
-        window.location.reload();
-      })
-  };
+  // const formatData = () => {
+  //   setLoading(true);
+  //   axios.get('https://scrapingback.onrender.com/prestige/delete_data')
+  //     .then(async res => {
+  //       setLoading(false);
+  //       message.success(res.data.message);
+  //       window.location.reload();
+  //     })
+  // };
   const [messageApi, contextHolder] = message.useMessage();
 
   const info = () => {
@@ -400,7 +410,7 @@ const Prestige = () => {
         </div>
       </div>
       <Table
-        style={{ margin: "15px",overflow:'auto' }}
+        style={{ margin: "15px" }}
         ref={tableRef}
         loading={loading}
         columns={columns}
