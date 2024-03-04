@@ -42,6 +42,8 @@
   width: 100%;
   z-index: 101;
   background-color: white!important;
+  padding: 0;
+  font-size:"20px";
 }
 
 /* Adjust content margin to avoid overlap with fixed sidebar and header */
@@ -50,7 +52,17 @@
 /* Make the content scrollable */
 .site-layout-content {
   overflow-y: auto;
-  margin-top: 80px;
+  margin-top: 64px;
   background-color: white;
-  height: calc(100vh - 80px); /* Adjust this value based on the height of your header */
+  height: calc(100vh - 110px); /* Adjust this value based on the height of your header */
+}
+.filter-header{
+  position:"fixed";
+  z-index:"100";
+  top:"64px";
+  padding: "0px 20px";
+   justify-content: "space-between";
+  background-color:"white"; 
+  display:"flex";
+  width:"87vw";
 }

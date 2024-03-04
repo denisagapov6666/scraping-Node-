@@ -26,7 +26,6 @@ const App = () => {
   const changeScroll = (e)=>{
     setScrollValue(e.target.scrollLeft);
   }
-  console.log(scrollvalue);
   return (
     <Layout  className="site-layout">
       <Router> {/* Wrap the Sider content with Router */}
@@ -61,8 +60,8 @@ const App = () => {
             className="site-layout-content"
             style={{
               minHeight: 280,
-              // overflow:"auto",
-              backgroundColor:"white"
+              backgroundColor:"white",
+              marginTop:"110px"
             }}
             onScroll = {(e)=>changeScroll(e)}
             >

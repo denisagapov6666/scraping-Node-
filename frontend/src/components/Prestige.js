@@ -180,12 +180,12 @@ const columns = [
 
 const Prestige = ({scrollvalue}) => {
 
-  const [receivedScrollValue, setReceivedScrollValue] = useState(0);
+  // const [receivedScrollValue, setReceivedScrollValue] = useState(0);
 
-  // Update the received scroll value when the prop changes
-  useEffect(() => {
-    setReceivedScrollValue(scrollvalue);
-  }, [scrollvalue]);
+  // // Update the received scroll value when the prop changes
+  // useEffect(() => {
+  //   setReceivedScrollValue(scrollvalue);
+  // }, [scrollvalue]);
   const tableRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
@@ -400,55 +400,60 @@ const Prestige = ({scrollvalue}) => {
         contextHolder
       }
       <div>
-      <div style={{padding: "0px 20px", justifyContent: "space-between", display:"flex",marginLeft:receivedScrollValue,marginRight:-receivedScrollValue}}>
-        <div style={{overflow:"scrollY"}}>
-          <Select
-            disabled={loading}
-            defaultValue="all"
-            style={{ width: 120 }}
-            onChange={(filter) => changeFilter(filter)}
-            options={[
-              { value: 'new', label: 'New' },
-              { value: 'deleted', label: 'Deleted' },
-              { value: 'all', label: 'All' },
-            ]}
+        <div style={{position:"fixed",zIndex:"100",top:"64px",padding: "0px 20px", justifyContent: "space-between",backgroundColor:"white", display:"flex",width:"87vw"}}>
+          <div style={{display:"flex"}}>
+            <div>
+              <Select
+                disabled={loading}
+                defaultValue="all"
+                style={{ width: 120 }}
+                onChange={(filter) => changeFilter(filter)}
+                options={[
+                  { value: 'new', label: 'New' },
+                  { value: 'deleted', label: 'Deleted' },
+                  { value: 'all', label: 'All' },
+                ]}
+              />
+              <Input
+              disabled = {loading}
+              placeholder="Search Name or SKU"
+              onChange={handleSearch}
+              style={{ width: 120}}
+            />
+
+            </div>
+            <div>
+              <RangePicker style = {{width:150}} onChange={handleDateRangeChange} disabled={loading}/>
+              <Select defaultValue="all" disabled = {loading} onChange={handleBrandChange} style={{ width: 150}}>
+                <Option value="all">All Collection</Option>
+                <Option value="prestige mills">Prestige Mills</Option>
+                <Option value="weave tuft">Weave Tuft</Option>
+                <Option value="mantra">Manta</Option>
+                <Option value="ashley stark home">Ashley Stark Home</Option>
+                <Option value="missoni home">Missoni Home</Option>
+              </Select>
+
+            </div>
+          </div>
+          <div>
+            <Button type='primary' disabled={loading} style={{ margin: "0px 10px",width:130}} onClick={handleStartScraping}>Start Scraping</Button>
+            <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
+            {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
+          </div>
+        </div>
+        <Table
+          style={{ margin: "0px 15px 15px 15px" }}
+          ref={tableRef}
+          loading={loading}
+          columns={columns}
+          dataSource={data.map(product => ({ ...product, date:moment(product.url.updatedAt).format("YYYY-MM-DD"),url: product.url.url, key: product._id, addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '' }))}
+          pagination={{
+            ...pagination,
+            onChange: handleChange
+          }}
           />
-          <Input
-          disabled = {loading}
-          placeholder="Search Name or SKU"
-          onChange={handleSearch}
-          style={{ width: 200}}
-        />
-        <RangePicker onChange={handleDateRangeChange} disabled={loading}/>
-        <Select defaultValue="all" disabled = {loading} onChange={handleBrandChange} style={{ width: 200}}>
-          <Option value="all">All Collection</Option>
-          <Option value="prestige mills">Prestige Mills</Option>
-          <Option value="weave tuft">Weave Tuft</Option>
-          <Option value="mantra">Manta</Option>
-          <Option value="ashley stark home">Ashley Stark Home</Option>
-          <Option value="missoni home">Missoni Home</Option>
-        </Select>
 
-        </div>
-        <div style={{textAlign:"right"}}>
-          <Button type='primary' disabled={loading} style={{ margin: "0px 10px"}} onClick={handleStartScraping}>Start Scraping</Button>
-          <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
-          {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
-        </div>
       </div>
-      <Table
-        style={{ margin: "15px" }}
-        ref={tableRef}
-        loading={loading}
-        columns={columns}
-        dataSource={data.map(product => ({ ...product, date:moment(product.url.updatedAt).format("YYYY-MM-DD"),url: product.url.url, key: product._id, addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '' }))}
-        pagination={{
-          ...pagination,
-          onChange: handleChange
-        }}
-
-        />
-        </div>
     </>
   )
 };

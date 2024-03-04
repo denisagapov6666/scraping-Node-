@@ -348,42 +348,48 @@ const Couristan = () => {
       {
         contextHolder
       }
-      <div style={{ padding: "0px 20px", justifyContent: "space-between", display:"flex" }}>
-        <div>
-          <Select
-            disabled={loading}
-            defaultValue="all"
-            style={{ width: 120 }}
-            onChange={(filter) => changeFilter(filter)}
-            options={[
-              { value: 'new', label: 'New' },
-              { value: 'deleted', label: 'Deleted' },
-              { value: 'all', label: 'All' },
-            ]}
+      <div style={{position:"fixed",zIndex:"100",top:"64px",padding: "0px 20px", justifyContent: "space-between",backgroundColor:"white", display:"flex",width:"87vw"}}>
+        <div style={{display:"flex"}}>
+          <div>
+            <Select
+              disabled={loading}
+              defaultValue="all"
+              style={{ width: 120 }}
+              onChange={(filter) => changeFilter(filter)}
+              options={[
+                { value: 'new', label: 'New' },
+                { value: 'deleted', label: 'Deleted' },
+                { value: 'all', label: 'All' },
+              ]}
+            />
+            <Input
+            disabled = {loading}
+            placeholder="Search Name or SKU"
+            onChange={handleSearch}
+            style={{ width: 120}}
           />
-          <Input
-          disabled = {loading}
-          placeholder="Search Name or SKU"
-          onChange={handleSearch}
-          style={{ width: 200}}
-        />
-        <RangePicker onChange={handleDateRangeChange} disabled={loading}/>
-        <Select defaultValue="all" disabled = {loading} onChange={handleBrandChange} style={{ width: 200}}>
-          <Option value="all">All Construction</Option>
-          <Option value="Hand-Tufted Loop Pile">Hand-Tufted Loop Pile</Option>
-          <Option value="Face-to-Face Woven Wilton">Face-to-Face Woven Wilton</Option>
-          <Option value="Hand-Loomed Loop Pile">Hand-Loomed Loop Pile</Option>
-          <Option value="Hand-Loomed Flatweave">Hand-Loomed Flatweave</Option>
-          <Option value="Hand-Loomed, Tip-Sheared Pile">Hand-Loomed, Tip-Sheared Pile</Option>
-          <Option value="Woven Writon Loop Pile">Woven Writon Loop Pile</Option>
-          <Option value="Hand-Loomed Cut and Loop Pile">Hand-Loomed Cut and Loop Pile</Option>
-          <Option value="Structured Flatwoven">Structured Flatwoven</Option>
-          <Option value="Face-to-Face Woven Wilton High/Low Cut-Pile">Face-to-Face Woven Wilton High/Low Cut-Pile</Option>
-        </Select>
+          </div>
+
+          <div>
+          <RangePicker onChange={handleDateRangeChange} style={{width:150}} disabled={loading}/>
+          <Select defaultValue="all" disabled = {loading} onChange={handleBrandChange} style={{ width: 150}}>
+            <Option value="all">All Construction</Option>
+            <Option value="Hand-Tufted Loop Pile">Hand-Tufted Loop Pile</Option>
+            <Option value="Face-to-Face Woven Wilton">Face-to-Face Woven Wilton</Option>
+            <Option value="Hand-Loomed Loop Pile">Hand-Loomed Loop Pile</Option>
+            <Option value="Hand-Loomed Flatweave">Hand-Loomed Flatweave</Option>
+            <Option value="Hand-Loomed, Tip-Sheared Pile">Hand-Loomed, Tip-Sheared Pile</Option>
+            <Option value="Woven Writon Loop Pile">Woven Writon Loop Pile</Option>
+            <Option value="Hand-Loomed Cut and Loop Pile">Hand-Loomed Cut and Loop Pile</Option>
+            <Option value="Structured Flatwoven">Structured Flatwoven</Option>
+            <Option value="Face-to-Face Woven Wilton High/Low Cut-Pile">Face-to-Face Woven Wilton High/Low Cut-Pile</Option>
+          </Select>
+
+          </div>
 
         </div>
-        <div style={{textAlign:"right"}}>
-          <Button type='primary' disabled={loading} style={{ margin: "0px 10px"}} onClick={handleStartScraping}>Start Scraping</Button>
+        <div>
+          <Button type='primary' disabled={loading} style={{ margin: "0px 10px",width:130}} onClick={handleStartScraping}>Start Scraping</Button>
           <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
           {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
         </div>
