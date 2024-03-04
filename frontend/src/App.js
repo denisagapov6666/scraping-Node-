@@ -21,7 +21,6 @@ const App = () => {
   const [headerTitle,setHeaderTitle] = useState("Prestige");
   const [scrollvalue,setScrollValue] = useState(0);
   const changeHeader = (title,e) =>{
-    console.log(title);
     setHeaderTitle(title)
   }
   return (

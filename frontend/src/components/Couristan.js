@@ -38,7 +38,8 @@ const columns = [
         </div>
       );
     },
-    fixed: "left"
+    fixed: "left",
+    align:"center"
   },
   {
     title: 'Product Name',
@@ -49,7 +50,8 @@ const columns = [
       return <div style={{textAlign:'center'}}>
         <a  style={{textAlign:'center', textTransform: 'uppercase' }} href={record.url+'?sku='+record.productSku} target="_blank" rel="noopener noreferrer">{productName}</a>  
       </div>
-    }
+    },
+    align:"center"
   },
   {
     title: 'Color',
@@ -57,24 +59,28 @@ const columns = [
     key: 'color',
     width: 100,
     render: color => <span style={{ textTransform: 'uppercase' }}>{color}</span>,
+    align:"center"
   },
   {
     title: 'Category',
     width: 100,
     dataIndex: 'category',
     key: 'category',
+    align:"center"
   },
   {
     title: 'Brand Name',
     dataIndex: 'brandName',
     key: 'brandName',
     width: 150,
+    align:"center"
   },
   {
     title: 'Construction',
     dataIndex: 'construction',
     key: 'construction',
     width: 150,
+    align:"center",
     filters: [
       { text: 'Hand-Tufted Loop Pile', value: 'Hand-Tufted Loop Pile' },
       { text: 'Face-to-Face Wowen Wilton', value: 'Face-to-Face Wowen Wilton' },
@@ -94,12 +100,14 @@ const columns = [
     dataIndex: 'width',
     key: 'width',
     width: 150,
+    align:"center"
   },
   {
     title: 'Repeat',
     dataIndex: 'repeat',
     key: 'repeat',
     width: 150,
+    align:"center"
   },
   {
     title: 'Date',
@@ -107,12 +115,13 @@ const columns = [
     key: 'date',
     width: 150,
     render: date => <span style={{ textTransform: 'uppercase' }}>{moment(date).format("YYYY-MM-DD")}</span>,
+    align:"center"
   },
   {
     title: 'Images',
     dataIndex: 'imageUrls',
     key: 'imageUrls',
-    width: 230,
+    width: 120,
     render: (imageUrls) => {
       // Render all images except the first one inside an anchor tag with a unique key
       return (
@@ -127,6 +136,7 @@ const columns = [
       );
     },
     fixed:"right",
+    align:"center"
   }
   
 ];
