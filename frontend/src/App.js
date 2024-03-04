@@ -19,11 +19,11 @@ const { Header, Sider, Content } = Layout;
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [headerTitle,setHeaderTitle] = useState("Prestige");
+  const [scrollvalue,setScrollValue] = useState(0);
   const changeHeader = (title,e) =>{
     console.log(title);
     setHeaderTitle(title)
   }
-
   return (
     <Layout  className="site-layout">
       <Router> {/* Wrap the Sider content with Router */}
@@ -63,7 +63,7 @@ const App = () => {
             }}
             >
               <Routes>
-                <Route path = "/" exact element={<Prestige/>}/>
+                <Route path = "/" exact element={<Prestige scrollvalue = {scrollvalue}/>}/>
                 <Route path = "/couristan" exact element={<Couristan/>}/>
               </Routes>
           </Content>
