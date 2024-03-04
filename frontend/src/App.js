@@ -19,9 +19,10 @@ const { Header, Sider, Content } = Layout;
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [headerTitle,setHeaderTitle] = useState("Prestige");
-  const changeHeader = (e) =>{
-    console.log(e.target.value)
-    setHeaderTitle(e.target.value)
+  const changeHeader = (title,e) =>{
+    console.log(title);
+    e.preventDefault();
+    setHeaderTitle(title)
   }
 
   return (
@@ -34,20 +35,15 @@ const App = () => {
               mode="inline"
               defaultSelectedKeys={['1']}
             >
-              <Menu.Item key="1"  icon={<SkinOutlined />}>
-                <Link to="/">
-                  <div onClick={changeHeader}>
-                    Prestige
-                  </div>
+              <Menu.Item key="1" icon={<SkinOutlined />}>
+                <Link to="/" onClick={(e) => changeHeader("Prestige",e)}>
+                  Prestige
                 </Link>
               </Menu.Item>
               <Menu.Item key="2" icon={<SketchOutlined />}>
-                <Link to="/couristan">
-                  <div  onClick={changeHeader}>
-                    Couristan
-                  </div>
+                <Link to="/couristan" onClick={(e) => changeHeader("Couristan",e)}>
+                  Couristan
                 </Link>
-
               </Menu.Item>
             </Menu>
         </Sider>
