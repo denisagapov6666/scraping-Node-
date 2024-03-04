@@ -23,6 +23,10 @@ const App = () => {
   const changeHeader = (title,e) =>{
     setHeaderTitle(title)
   }
+  const changeScroll = (e)=>{
+    setScrollValue(e.target.scrollLeft);
+  }
+  console.log(scrollvalue);
   return (
     <Layout  className="site-layout">
       <Router> {/* Wrap the Sider content with Router */}
@@ -60,6 +64,7 @@ const App = () => {
               // overflow:"auto",
               backgroundColor:"white"
             }}
+            onScroll = {(e)=>changeScroll(e)}
             >
               <Routes>
                 <Route path = "/" exact element={<Prestige scrollvalue = {scrollvalue}/>}/>

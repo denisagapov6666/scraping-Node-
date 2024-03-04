@@ -178,8 +178,14 @@ const columns = [
   
 ];
 
-const Prestige = () => {
+const Prestige = ({scrollvalue}) => {
 
+  const [receivedScrollValue, setReceivedScrollValue] = useState(0);
+
+  // Update the received scroll value when the prop changes
+  useEffect(() => {
+    setReceivedScrollValue(scrollvalue);
+  }, [scrollvalue]);
   const tableRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
@@ -190,7 +196,11 @@ const Prestige = () => {
     pageSize: 20,
     pageSizeOptions: [20, 50, 100]
   })
-
+  window.addEventListener('scroll', function() {
+    // Get the scroll position of the window
+    const scrollPosition = window.scrollY;
+    console.log('Scroll position:', scrollPosition);
+  });
   useEffect(() => {
     setLoading(true)
     axios.get(`https://scrapingback.onrender.com/prestige/get_products_info`)
@@ -390,8 +400,8 @@ const Prestige = () => {
         contextHolder
       }
       <div>
-      <div style={{padding: "0px 20px", justifyContent: "space-between", display:"flex"}}>
-        <div>
+      <div style={{padding: "0px 20px", justifyContent: "space-between", display:"flex",marginLeft:receivedScrollValue,marginRight:-receivedScrollValue}}>
+        <div style={{overflow:"scrollY"}}>
           <Select
             disabled={loading}
             defaultValue="all"
