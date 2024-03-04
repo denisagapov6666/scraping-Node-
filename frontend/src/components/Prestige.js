@@ -373,7 +373,8 @@ const Prestige = () => {
       {
         contextHolder
       }
-      <div style={{ padding: "0px 20px", justifyContent: "space-between", display:"flex"}}>
+      <div>
+      <div style={{padding: "0px 20px", justifyContent: "space-between", display:"flex"}}>
         <div>
           <Select
             disabled={loading}
@@ -419,7 +420,9 @@ const Prestige = () => {
           ...pagination,
           onChange: handleChange
         }}
-      />
+
+        />
+        </div>
     </>
   )
 };

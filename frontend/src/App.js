@@ -46,8 +46,8 @@ const App = () => {
               </Menu.Item>
             </Menu>
         </Sider>
-        <Layout>
-          <Header className="site-layout-header" style={{ padding: 0,fontSize:"20px" }}>
+        <Layout style={{backgroundColor:'white'}}>
+          <Header className="site-layout-header" style={{ padding: 0,fontSize:"20px",backgroundColor:"grey" }}>
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
               className: 'trigger',
               onClick: () => setCollapsed(!collapsed),
@@ -59,6 +59,7 @@ const App = () => {
             style={{
               minHeight: 280,
               // overflow:"auto",
+              backgroundColor:"white"
             }}
             >
               <Routes>

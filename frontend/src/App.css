@@ -22,7 +22,7 @@
 }
 
 .site-layout .site-layout-background {
-  background: #fff;
+  background: #fff!important;
 }
 /* App.css */
 
@@ -51,5 +51,6 @@
 .site-layout-content {
   overflow-y: auto;
   margin-top: 80px;
+  background-color: white;
   height: calc(100vh - 80px); /* Adjust this value based on the height of your header */
 }
