@@ -161,11 +161,11 @@ const Couristan = () => {
       // Make sure `res.data.total` correctly represents the total number of items available in the backend
       setPagination(prevPagination => ({
         ...prevPagination,
-        total: res.data.total, // This should be the total number of items, not the number of items in the current page
-        pageSizeOptions: res.data.total > 100 ? [20, 50, 100, res.data.total] : [20, 50, 100],
+        total: res.data.data.total, // This should be the total number of items, not the number of items in the current page
+        pageSizeOptions: res.data.data.total > 100 ? [20, 50, 100, res.data.data.total] : [20, 50, 100],
       }));
-      setOriginData(res.data.products);
-      setData(res.data.products);
+      setOriginData(res.data.data.products);
+      setData(res.data.data.products);
       
       setLoading(false);
     });

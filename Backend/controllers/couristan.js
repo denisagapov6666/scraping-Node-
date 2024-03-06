@@ -15,8 +15,7 @@ const getProduct = async (req, res) => {
         .populate({ path: 'url' });
     const total = await ProductModel
         .countDocuments({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
-    const history = historyModel.find();
-    return res.status(200).json({ success: true, products, total, history })
+    return res.status(200).json({ success: true,data: {products,total} })
 }
 
 const startScraping = async (req, res) => {
