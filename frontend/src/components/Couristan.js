@@ -227,6 +227,11 @@ const Couristan = () => {
           setLoading(false);
           setData(res.data.data.products);
           setOriginData(res.data.data.products);
+          setPagination(prevPagination => ({
+            ...prevPagination,
+            total: res.data.data.total, // This should be the total number of items, not the number of items in the current page
+            pageSizeOptions: res.data.data.total > 100 ? [20, 50, 100, res.data.data.total] : [20, 50, 100],
+          }));
           success(`${res.data.data.new} Product(s) is(are) added and ${res.data.data.removed} Product(s) is(are) removed.`);
           // await setTimeout(window.location.reload(),3000);
         }else{

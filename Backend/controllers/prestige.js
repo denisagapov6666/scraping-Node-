@@ -4,7 +4,7 @@ const RequestModel = require("../models/RequestModel");
 
 const getProductInfo = require('../utils/prestige/getProductInfo');
 const getUrls = require('../utils/prestige/getUrls');
-
+const historyModel = require("../models/prestige/history")
 
 
 const getProduct = async (req, res) => {
@@ -14,19 +14,27 @@ const getProduct = async (req, res) => {
         .populate({ path: 'url' });
     const total = await ProductModel
         .countDocuments({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
-    return res.status(200).json({ success: true, products, total })
+    const history = await historyModel.find()
+    return res.status(200).json({ success: true, products, total, history })
 }
 
 const startScraping = async (req, res) => {
     const removed = await getUrls();
-    await getProductInfo();
-    const newurlmodels = await URLModel.find({ new: true });
-    const newproducts = await ProductModel
-        .find({ url: { $in: newurlmodels.map(urlmodel => urlmodel._id) } })
+    let newpro = 0;
+    if(removed.isadded>0){
+        await getProductInfo();
+        const newurlmodels = await URLModel.find({ new: true });
+        const newproducts = await ProductModel
+            .find({ url: { $in: newurlmodels.map(urlmodel => urlmodel._id) } })
+        newpro = newproducts.length;
+    }
     const urlmodels = await URLModel.find();
-    const products = await ProductModel.find({url:{$in:urlmodels.map(urlmodel=>urlmodel._id)}});
+    const products = await ProductModel.find({url:{$in:urlmodels.map(urlmodel=>urlmodel._id)}}).populate({path:"url"});
+    const history = await historyModel.find();
+    const total = await ProductModel
+        .countDocuments({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
     await RequestModel.findOneAndUpdate({ url: req.url }, { state: false });
-    return res.status(200).json({ success: true, data: { removed, new: newproducts.length,products } })
+    return res.status(200).json({ success: true, data: { removed:removed.removed, new: newpro,products,total,history } })
 }
 
 const deleteData = async (req, res) => {

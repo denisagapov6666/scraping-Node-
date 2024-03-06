@@ -2,7 +2,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const URLModel = require('../../models/prestige/URLModel');
 const ProductModel = require('../../models/prestige/ProductModel');
-
+const HistoryModel = require("../../models/prestige/history");
 const checkUrl = (newUrls) => new Promise(async (resolve, reject) => {
     try {
         const allUrlModels = await URLModel.find();
@@ -12,28 +12,34 @@ const checkUrl = (newUrls) => new Promise(async (resolve, reject) => {
         const addedUrls = newUrls.filter(url => !allUrls.includes(url));
 
         let removedProductsLength = 0;
+        if(removedUrls.length>0){
+            // Update existing URLs in the database
+            await Promise.all(allUrlModels.map(async urlModel => {
+                if (removedUrls.includes(urlModel.url)) {
+                    const products = await ProductModel.find({ url: urlModel._id });
+                    removedProductsLength += products.length;
+                    await URLModel.findByIdAndUpdate(urlModel._id, { new: false, deleted: true });
+                }
+            }));
+        }
+        if(addedUrls.length>0){
+            await URLModel.updateMany({new:true},{$set: { new: false }});
+            // Add new URLs to the database
+            await Promise.all(addedUrls.map(async url => {
+                const newUrlModel = new URLModel({
+                    url,
+                    deleted: false,
+                });
+                await newUrlModel.save();
+            }));
 
-        // Update existing URLs in the database
-        await Promise.all(allUrlModels.map(async urlModel => {
-            if (removedUrls.includes(urlModel.url)) {
-                const products = await ProductModel.find({ url: urlModel._id });
-                removedProductsLength += products.length;
-                await URLModel.findByIdAndUpdate(urlModel._id, { new: false, deleted: true });
-            } else {
-                await URLModel.findByIdAndUpdate(urlModel._id, { new: false });
-            }
-        }));
+        }
+        if(addedUrls.length>0||removedUrls.length>0){
+            new HistoryModel({history:"#"}).save()
 
-        // Add new URLs to the database
-        await Promise.all(addedUrls.map(async url => {
-            const newUrlModel = new URLModel({
-                url,
-                deleted: false,
-            });
-            await newUrlModel.save();
-        }));
+        }
 
-        resolve(removedProductsLength)
+        resolve({removed:removedProductsLength,isremoved:removedUrls.length,isadded:addedUrls.length})
     } catch (error) {
         console.error('Error updating URLs in database:', error);
     }

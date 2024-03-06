@@ -16,4 +16,4 @@ const URLSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('URL', URLSchema);
+module.exports = mongoose.model('prestigeUrls', URLSchema);

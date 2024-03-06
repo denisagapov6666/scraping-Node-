@@ -196,6 +196,7 @@ const Prestige = ({scrollvalue}) => {
     pageSize: 20,
     pageSizeOptions: [20, 50, 100]
   })
+  const [history,setHistory] = useState([]);
   window.addEventListener('scroll', function() {
     // Get the scroll position of the window
     const scrollPosition = window.scrollY;
@@ -205,6 +206,7 @@ const Prestige = ({scrollvalue}) => {
     setLoading(true)
     axios.get(`https://scrapingback.onrender.com/prestige/get_products_info`)
     .then(async res => {
+      setHistory(res.data.history)
       // Make sure `res.data.total` correctly represents the total number of items available in the backend
       setPagination(prevPagination => ({
         ...prevPagination,
@@ -270,9 +272,15 @@ const Prestige = ({scrollvalue}) => {
     axios.get('https://scrapingback.onrender.com/prestige/start_scraping')
       .then(async res => {
         if(res.data.success){
+          setHistory(res.data.data.history)
           setLoading(false);
           setData(res.data.data.products);
           setOriginData(res.data.data.products);
+          setPagination(prevPagination => ({
+            ...prevPagination,
+            total: res.data.data.total, // This should be the total number of items, not the number of items in the current page
+            pageSizeOptions: res.data.data.total > 100 ? [20, 50, 100, res.data.data.total] : [20, 50, 100],
+          }));
           success(`${res.data.data.new} Product(s) is(are) added and ${res.data.data.removed} Product(s) is(are) removed.`);
           // await setTimeout(window.location.reload(),3000);
         }else{

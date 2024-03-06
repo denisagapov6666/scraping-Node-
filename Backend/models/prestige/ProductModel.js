@@ -4,7 +4,7 @@ const ProductSchema = new Schema({
     url: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: "URL"
+        ref: "prestigeUrls"
     },
     category: {
         type: String
@@ -58,4 +58,4 @@ const ProductSchema = new Schema({
     ]
 })
 
-module.exports = mongoose.model('Product', ProductSchema);
+module.exports = mongoose.model('prestigeProducts', ProductSchema);
