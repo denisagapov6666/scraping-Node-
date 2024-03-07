@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, message, Select, Button, Input, DatePicker} from 'antd';
+import { Table, message, Select, Button, Input, DatePicker,Modal} from 'antd';
 import axios from 'axios';
 import { Excel } from "antd-table-saveas-excel";
 import moment from 'moment';
@@ -197,6 +197,7 @@ const Prestige = ({scrollvalue}) => {
     pageSizeOptions: [20, 50, 100]
   })
   const [history,setHistory] = useState([]);
+  const [modalData,setModalData] = useState([]);
   window.addEventListener('scroll', function() {
     // Get the scroll position of the window
     const scrollPosition = window.scrollY;
@@ -216,8 +217,9 @@ const Prestige = ({scrollvalue}) => {
       setOriginData(res.data.products);
       setData(res.data.products);
       setLoading(false);
+      historyShow();
     });
-
+    
   },[])
 
   const handleChange = (current, pageSize) => {
@@ -401,7 +403,33 @@ const Prestige = ({scrollvalue}) => {
       }
     });
   };
-
+  const [modal2Open, setModal2Open] = useState(false);
+  const historyShow = ()=>{
+    const historyData = [];
+    for (let i = 0; i < history.length; i++) {
+      const scrapingDate = moment(history[i].createdAt).format("YYYY-MM-DD");
+      const addedData = originData.filter((item)=>{
+        const itemDate = moment(item.url.createdAt).format("YYYY-MM-DD");
+        return itemDate === scrapingDate
+      })
+      const deletedData = originData.filter((item)=>{
+        const itemDate = moment(item.url.updatedAt).format("YYYY-MM-DD")
+        return itemDate === scrapingDate
+      })
+      const addedAccount = addedData.filter((item) => {
+        return item.url.new === false && item.url.deleted ===false;
+      }).length;
+      const deletedAccount = deletedData.filter((item)=>{
+        return item.url.deleted === true
+      }).length;
+      historyData.push({scrapingDate,addedAccount,deletedAccount});
+    }
+    setModalData(historyData);
+  }
+  const modalContrl = ()=>{
+    setModal2Open(true);
+    historyShow();
+  }
   return (
     <>
       {
@@ -444,9 +472,31 @@ const Prestige = ({scrollvalue}) => {
             </div>
           </div>
           <div>
-            <Button type='primary' disabled={loading} style={{ margin: "0px 10px",width:130}} onClick={handleStartScraping}>Start Scraping</Button>
             <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
+            <Button type='primary' disabled={loading} style={{ margin: "0px 10px",width:130}} onClick={handleStartScraping}>Start Scraping</Button>
             {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
+            <Button type="primary" onClick={modalContrl} disabled = {loading}>
+              Scraping History
+            </Button>
+            <Modal
+              title="History that scrape in Prestige page"
+              centered
+              footer = "Please use DatePicker Filter Function to see more detail product information"
+
+              open={modal2Open}
+              onOk={() => setModal2Open(false)}
+              onCancel={() => setModal2Open(false)}
+            >
+              <Table
+                dataSource={modalData}
+                columns={[
+                  { title: 'Scraping Date', dataIndex: 'scrapingDate', key: 'scrapingDate', align:"center"},
+                  { title: 'Added Amount', dataIndex: 'addedAccount', key: 'addedAccount',align:"center"},
+                  { title: 'Deleted Amount', dataIndex: 'deletedAccount', key: 'deletedAccount',align:"center"}, 
+                ]}
+                pagination={false} // Disable pagination if all data fits in the modal
+              />
+            </Modal>
           </div>
         </div>
         <Table
@@ -458,6 +508,9 @@ const Prestige = ({scrollvalue}) => {
           pagination={{
             ...pagination,
             onChange: handleChange
+          }}
+          locale={{
+            emptyText: 'No removed products since the last scrape on March 6, 2024'
           }}
           />
 

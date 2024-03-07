@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, message, Select, Button, Input, DatePicker} from 'antd';
+import { Table, message, Select, Button, Input, DatePicker,Modal} from 'antd';
 import axios from 'axios';
 import { Excel } from "antd-table-saveas-excel";
 import moment from 'moment';
@@ -153,11 +153,16 @@ const Couristan = () => {
     pageSize: 20,
     pageSizeOptions: [20, 50, 100]
   })
+  const [history,setHistory] = useState([]);
+  const [modalData,setModalData] = useState([]);
 
   useEffect(() => {
     setLoading(true)
     axios.get(`https://scrapingback.onrender.com/couristan/get_products_info`)
     .then(async res => {
+      console.log(res.data.data.history)
+      setHistory(res.data.data.history)
+
       // Make sure `res.data.total` correctly represents the total number of items available in the backend
       setPagination(prevPagination => ({
         ...prevPagination,
@@ -166,7 +171,6 @@ const Couristan = () => {
       }));
       setOriginData(res.data.data.products);
       setData(res.data.data.products);
-      
       setLoading(false);
     });
 
@@ -224,6 +228,8 @@ const Couristan = () => {
     axios.get('https://scrapingback.onrender.com/couristan/start_scraping')
       .then(async res => {
         if(res.data.success){
+          setHistory(res.data.data.history)
+
           setLoading(false);
           setData(res.data.data.products);
           setOriginData(res.data.data.products);
@@ -347,7 +353,33 @@ const Couristan = () => {
       }
     });
   };
-
+  const [modal2Open, setModal2Open] = useState(false);
+  const historyShow = ()=>{
+    const historyData = [];
+    for (let i = 0; i < history.length; i++) {
+      const scrapingDate = moment(history[i].createdAt).format("YYYY-MM-DD");
+      const addedData = originData.filter((item)=>{
+        const itemDate = moment(item.url.createdAt).format("YYYY-MM-DD");
+        return itemDate === scrapingDate
+      })
+      const deletedData = originData.filter((item)=>{
+        const itemDate = moment(item.url.updatedAt).format("YYYY-MM-DD")
+        return itemDate === scrapingDate
+      })
+      const addedAccount = addedData.filter((item) => {
+        return item.url.new === false && item.url.deleted ===false;
+      }).length;
+      const deletedAccount = deletedData.filter((item)=>{
+        return item.url.deleted === true
+      }).length;
+      historyData.push({scrapingDate,addedAccount,deletedAccount});
+    }
+    setModalData(historyData);
+  }
+  const modalControl = () => {
+    setModal2Open(true);
+    historyShow()
+  }
   return (
     <>
       {
@@ -394,9 +426,31 @@ const Couristan = () => {
 
         </div>
         <div>
-          <Button type='primary' disabled={loading} style={{ margin: "0px 10px",width:130}} onClick={handleStartScraping}>Start Scraping</Button>
           <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
+          <Button type='primary' disabled={loading} style={{ margin: "0px 10px",width:130}} onClick={handleStartScraping}>Start Scraping</Button>
           {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
+          <Button type="primary" onClick={modalControl} disabled = {loading}>
+              Scraping History
+            </Button>
+            <Modal
+              title="History that scrape in Prestige page"
+              centered
+              footer = "Please use DatePicker Filter Function to see more detail product information"
+
+              open={modal2Open}
+              onOk={() => setModal2Open(false)}
+              onCancel={() => setModal2Open(false)}
+            >
+              <Table
+                dataSource={modalData}
+                columns={[
+                  { title: 'Scraping Date', dataIndex: 'scrapingDate', key: 'scrapingDate',align:"center" },
+                  { title: 'Added Amount', dataIndex: 'addedAccount', key: 'addedAccount',align:"center"},
+                  { title: 'Deleted Amount', dataIndex: 'deletedAccount', key: 'deletedAccount',align:"center"}, 
+                ]}
+                pagination={false} // Disable pagination if all data fits in the modal
+              />
+            </Modal>
         </div>
         
       </div>
@@ -409,6 +463,9 @@ const Couristan = () => {
         pagination={{
           ...pagination,
           onChange: handleChange
+        }}
+        locale={{
+          emptyText: 'No removed products since the last scrape on March 6, 2024'
         }}
       />
     </>

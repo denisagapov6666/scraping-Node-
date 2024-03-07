@@ -15,7 +15,8 @@ const getProduct = async (req, res) => {
         .populate({ path: 'url' });
     const total = await ProductModel
         .countDocuments({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
-    return res.status(200).json({ success: true,data: {products,total} })
+    const history = await historyModel.find();
+    return res.status(200).json({ success: true,data: {products,total,history} })
 }
 
 const startScraping = async (req, res) => {
@@ -34,6 +35,7 @@ const startScraping = async (req, res) => {
     const total = await ProductModel
         .countDocuments({ url: { $in: urlmodels.map(urlmodel => urlmodel._id) } })
     await RequestModel.findOneAndUpdate({ url: req.url }, { state: false });
+    console.log(history);
     return res.status(200).json({ success: true, data: { removed:removed.removed, new: newpro,products,total,history } })
 }
 
