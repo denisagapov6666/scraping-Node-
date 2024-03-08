@@ -450,7 +450,7 @@ const Couristan = () => {
               Scraping History
             </Button>
             <Modal
-              title="History that scrape in Prestige page"
+              title="History that scrape in Couristan page"
               centered
               footer = "Please use DatePicker Filter Function to see more detail product information"
 

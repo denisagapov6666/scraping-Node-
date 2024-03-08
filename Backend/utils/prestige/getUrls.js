@@ -34,10 +34,8 @@ const checkUrl = (newUrls) => new Promise(async (resolve, reject) => {
             }));
 
         }
-        if(addedUrls.length>0||removedUrls.length>0){
-            new HistoryModel({history:"#"}).save()
+        await new HistoryModel({history:"#"}).save()
 
-        }
 
         resolve({removed:removedProductsLength,isremoved:removedUrls.length,isadded:addedUrls.length})
     } catch (error) {
