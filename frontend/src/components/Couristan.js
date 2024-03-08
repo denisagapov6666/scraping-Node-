@@ -162,7 +162,6 @@ const Couristan = () => {
     setLoading(true)
     axios.get(`https://scrapingback.onrender.com/couristan/get_products_info`)
     .then(async res => {
-      console.log(res.data.data.history)
       setHistory(res.data.data.history)
       setFinalScrapingDate(moment(res.data.data.history[res.data.data.history.length-1].createdAt).format("MMM DD YYYY"))
 
@@ -245,7 +244,6 @@ const Couristan = () => {
           // await setTimeout(window.location.reload(),3000);
         }else{
           setLoading(false);
-          console.log(res.data.message);
           message.warning({
             content:res.data.message,
             style:{
