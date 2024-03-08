@@ -23,7 +23,7 @@ const columns = [
           <span 
             style={{
               position: 'absolute',
-              top: "-50px",
+              top: "-25px",
               left: 0,
               // transform: 'rotate(-45deg)',
               transformOrigin: 'top left',
@@ -155,6 +155,8 @@ const Couristan = () => {
   })
   const [history,setHistory] = useState([]);
   const [modalData,setModalData] = useState([]);
+  const [finalScrapingDate,setFinalScrapingDate] = useState('');
+  const [noDataMessage,setNoDataMessage] = useState('');
 
   useEffect(() => {
     setLoading(true)
@@ -162,6 +164,7 @@ const Couristan = () => {
     .then(async res => {
       console.log(res.data.data.history)
       setHistory(res.data.data.history)
+      setFinalScrapingDate(moment(res.data.data.history[res.data.data.history.length-1].createdAt).format("MMM DD YYYY"))
 
       // Make sure `res.data.total` correctly represents the total number of items available in the backend
       setPagination(prevPagination => ({
@@ -229,7 +232,7 @@ const Couristan = () => {
       .then(async res => {
         if(res.data.success){
           setHistory(res.data.data.history)
-
+          setFinalScrapingDate(moment(res.data.data.history[res.data.data.history.length-1].createdAt).format("MMM DD YYYY"))
           setLoading(false);
           setData(res.data.data.products);
           setOriginData(res.data.data.products);
@@ -257,10 +260,19 @@ const Couristan = () => {
     let filteredData = originData;
     if (filter === "new") {
       filteredData = originData.filter(element => element.url.new === true);
+      if(filteredData.length===0){
+        setNoDataMessage(`No new products since the last scrape on ${finalScrapingDate}`)
+      }
     } else if (filter === "deleted") {
       filteredData = originData.filter(element => element.url.deleted === true);
+      if(filteredData.length===0){
+        setNoDataMessage(`No removed products since the last scrape on ${finalScrapingDate}`)
+      }
     }else if(filter === "all"){
       filteredData = originData;
+      if(filteredData.length===0){
+        setNoDataMessage(`No products that scraped`)
+      }
     }
     setPagination(prevPagination => ({
       ...prevPagination,
@@ -284,6 +296,9 @@ const Couristan = () => {
       const itemDate = moment(item.url.updatedAt).toDate();
       return itemDate >= startDate && itemDate <= endDate;
     });
+    if(filtered.length===0){
+       setNoDataMessage(`No Products that matched in Date Picker`)
+    }
   
     setPagination(prevPagination => ({
       ...prevPagination,
@@ -301,6 +316,10 @@ const Couristan = () => {
       item.productSku.toLowerCase().includes(value) ||
       item.productName.toLowerCase().includes(value)
     );
+    if(filtered.length===0){
+      setNoDataMessage(`No Products that searched`)
+   }
+  
     setPagination(prevPagination => ({
       ...prevPagination,
       current: 1, // Reset pagination to the first page
@@ -367,7 +386,7 @@ const Couristan = () => {
         return itemDate === scrapingDate
       })
       const addedAccount = addedData.filter((item) => {
-        return item.url.new === false || item.url.new === true && item.url.deleted ===false;
+        return (item.url.new === false || item.url.new === true) && item.url.deleted ===false;
       }).length;
       const deletedAccount = deletedData.filter((item)=>{
         return item.url.deleted === true
@@ -465,7 +484,7 @@ const Couristan = () => {
           onChange: handleChange
         }}
         locale={{
-          emptyText: 'No removed products since the last scrape on March 6, 2024'
+          emptyText: noDataMessage
         }}
       />
     </>
