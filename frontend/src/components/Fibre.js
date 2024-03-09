@@ -228,7 +228,7 @@ const Fibre = ({scrollvalue}) => {
       .map(column => ({ title: column.title, dataIndex: column.dataIndex, key: column.key }));
   
     // Add image columns
-    for (let i = 0; i <= 8; i++) {
+    for (let i = 0; i <= 10; i++) {
       excelColumns.push({ title: `Image ${i + 1}`, dataIndex: `image_${i}`, key: `image_${i}` });
     }
   
@@ -243,9 +243,9 @@ const Fibre = ({scrollvalue}) => {
       rowData.date = moment(product.url.updatedAt).format("YYYY-MM-DD");
   
       // Populate image data for each image column
-      for (let i = 0; i <= 8; i++) {
-        if (product.images[i]) {
-          rowData[`image_${i}`] = product.images[i];
+      for (let i = 0; i <= 10; i++) {
+        if (product.imageUrls[i]) {
+          rowData[`image_${i}`] = product.imageUrls[i];
         } else {
           rowData[`image_${i}`] = ''; // Populate empty string if no image available
         }
