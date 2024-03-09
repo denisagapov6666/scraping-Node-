@@ -255,10 +255,10 @@ const Fibre = ({scrollvalue}) => {
     });
   
     // Add data to the Excel instance
-    excel.addSheet('Prestige').addColumns(excelColumns).addDataSource(excelDataSource, { str2Percent: true });
+    excel.addSheet('FibreWorks').addColumns(excelColumns).addDataSource(excelDataSource, { str2Percent: true });
   
     // Save the Excel file
-    excel.saveAs('Prestige.xlsx');
+    excel.saveAs('FibreWorks.xlsx');
   };
   
   const handleStartScraping = async () => {
