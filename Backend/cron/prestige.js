@@ -7,7 +7,6 @@ const getUrls = require('../utils/prestige/getUrls');
 
 const ProductModel = require('../models/prestige/ProductModel');
 const URLModel = require('../models/prestige/URLModel');
-const historyModel = require("../models/prestige/history")
 const RequestModel = require("../models/RequestModel");
 
 const prestigeCronJob = () => cron.schedule('12 0 * * 6', async () => {
@@ -16,7 +15,6 @@ const prestigeCronJob = () => cron.schedule('12 0 * * 6', async () => {
         console.log('Another user or process is currently scraping. Please wait.');
     } else {
         const scrapping = async () => {
-            await new historyModel({ history: "#" }).save();
             const removed = await getUrls();
             if (removed.isadded > 0) {
                 await getProductInfo();

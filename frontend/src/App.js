@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route,Link} from 'react-router-dom';
 import Prestige from './components/Prestige';
 import Couristan from './components/Couristan';
+import Fibre from './components/Fibre';
 import "./App.css";
 import React, { useState } from 'react';
 import './index.css';
@@ -8,7 +9,8 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   SkinOutlined ,
-  SketchOutlined
+  SketchOutlined,
+  GitlabOutlined
   
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
@@ -46,6 +48,12 @@ const App = () => {
                   Couristan
                 </Link>
               </Menu.Item>
+              <Menu.Item key="3" icon={<GitlabOutlined />}>
+                <Link to="/fibreworks" onClick={(e) => changeHeader("FibreWorks",e)}>
+                  FibreWorks
+                </Link>
+              </Menu.Item>
+              
             </Menu>
         </Sider>
         <Layout style={{backgroundColor:'white'}}>
@@ -67,7 +75,8 @@ const App = () => {
             >
               <Routes>
                 <Route path = "/" exact element={<Prestige scrollvalue = {scrollvalue}/>}/>
-                <Route path = "/couristan" exact element={<Couristan/>}/>
+                <Route path = "/couristan"  element={<Couristan/>}/>
+                <Route path = "/fibreworks" element={<Fibre/>}/>
               </Routes>
           </Content>
         </Layout>

@@ -76,25 +76,29 @@ const columns = [
     align:"center"
   },
   {
-    title: 'Construction',
-    dataIndex: 'construction',
-    key: 'construction',
+    title: 'Collection',
+    dataIndex: 'collection',
+    key: 'collection',
     width: 150,
-    align:"center",
+    align:"center"
+  },
+  {
+    title: 'Fiber',
+    dataIndex: 'fiberType',
+    key: 'fiberType',
+    width: 150,
     filters: [
-      { text: 'Hand-Tufted Loop Pile', value: 'Hand-Tufted Loop Pile' },
-      { text: 'Face-to-Face Wowen Wilton', value: 'Face-to-Face Wowen Wilton' },
-      { text: 'Hand-Loomed Loop Pile', value: 'Hand-Loomed Loop Pile' },
-      { text: 'Hand-Loomed Flatweave', value: 'Hand-Loomed Flatweave' },
-      { text: 'Hand-Loomed, Tip-Sheared Pile', value: 'Hand-Loomed, Tip-Sheared Pile' },
-      { text: 'Woven Writon Loop Pile', value: 'Woven Writon Loop Pile' },
-      { text: 'Hand-Loomed Cut and Loop Pile', value: 'Hand-Loomed Cut and Loop Pile' },
-      { text: 'Structured Flatwoven', value: 'Structured Flatwoven' },
-      { text: 'Face-to-Face Woven Wilton High/Low Cut-Pile', value: 'Face-to-Face Woven Wilton High/Low Cut-Pile' },
+      { text: 'Wool', value: 'Wool' },
+      { text: 'Sisal- Classic', value: 'Sisal- Classic' },
+      { text: 'Sisal- Designer', value: 'Sisal- Designer' },
+      { text: 'Wool and Sisal', value: 'Wool and Sisal' },
+      { text: 'Wool Blends', value: 'Wool Blends' },
     ],
     onFilter: (value, record) => record.brand === value,
     render: (text) => <span>{text}</span>,
+    align:"center"
   },
+
   {
     title: 'Width',
     dataIndex: 'width',
@@ -103,9 +107,30 @@ const columns = [
     align:"center"
   },
   {
-    title: 'Repeat',
-    dataIndex: 'repeat',
-    key: 'repeat',
+    title: 'Pattern',
+    dataIndex: 'pattern',
+    key: 'pattern',
+    width: 150,
+    align:"center"
+  },
+  {
+    title: 'Pattern Repeat',
+    dataIndex: 'patternRepeat',
+    key: 'patternRepeat',
+    width: 150,
+    align:"center"
+  },
+  {
+    title: 'Fiber Composition',
+    dataIndex: 'fiberComposition',
+    key: 'fiberComposition',
+    width: 150,
+    align:"center"
+  },
+  {
+    title: 'Backing',
+    dataIndex: 'backing',
+    key: 'backing',
     width: 150,
     align:"center"
   },
@@ -114,7 +139,6 @@ const columns = [
     dataIndex: 'date',
     key: 'date',
     width: 150,
-    render: date => <span style={{ textTransform: 'uppercase' }}>{moment(date).format("YYYY-MM-DD")}</span>,
     align:"center"
   },
   {
@@ -141,8 +165,14 @@ const columns = [
   
 ];
 
-const Couristan = () => {
+const Fibre = ({scrollvalue}) => {
 
+  // const [receivedScrollValue, setReceivedScrollValue] = useState(0);
+
+  // // Update the received scroll value when the prop changes
+  // useEffect(() => {
+  //   setReceivedScrollValue(scrollvalue);
+  // }, [scrollvalue]);
   const tableRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
@@ -156,26 +186,33 @@ const Couristan = () => {
   const [history,setHistory] = useState([]);
   const [modalData,setModalData] = useState([]);
   const [finalScrapingDate,setFinalScrapingDate] = useState('');
-  const [noDataMessage,setNoDataMessage] = useState('');
+  const [noDataMessage,setNoDataMessage] = useState("");
 
+  window.addEventListener('scroll', function() {
+    // Get the scroll position of the window
+    const scrollPosition = window.scrollY;
+    console.log('Scroll position:', scrollPosition);
+  });
   useEffect(() => {
     setLoading(true)
-    axios.get(`https://scrapingback.onrender.com/couristan/get_products_info`)
+    axios.get(`https://scrapingback.onrender.com/fibreworks/get_products_info`)
     .then(async res => {
-      setHistory(res.data.data.history)
-      setFinalScrapingDate(moment(res.data.data.history[res.data.data.history.length-1].createdAt).format("MMM DD YYYY"))
+      setHistory(res.data.history)
+      if(res.data.history.length>0){
+        setFinalScrapingDate(moment(res.data.history[res.data.history.length-1].createdAt).format("MMM DD YYYY"))
 
+      }
       // Make sure `res.data.total` correctly represents the total number of items available in the backend
       setPagination(prevPagination => ({
         ...prevPagination,
-        total: res.data.data.total, // This should be the total number of items, not the number of items in the current page
-        pageSizeOptions: res.data.data.total > 100 ? [20, 50, 100, res.data.data.total] : [20, 50, 100],
+        total: res.data.total, // This should be the total number of items, not the number of items in the current page
+        pageSizeOptions: res.data.total > 100 ? [20, 50, 100, res.data.total] : [20, 50, 100],
       }));
-      setOriginData(res.data.data.products);
-      setData(res.data.data.products);
+      setOriginData(res.data.products);
+      setData(res.data.products);
       setLoading(false);
     });
-
+    
   },[])
 
   const handleChange = (current, pageSize) => {
@@ -207,8 +244,8 @@ const Couristan = () => {
   
       // Populate image data for each image column
       for (let i = 0; i <= 5; i++) {
-        if (product.imageUrls[i]) {
-          rowData[`image_${i}`] = product.imageUrls[i];
+        if (product.images[i]) {
+          rowData[`image_${i}`] = product.images[i];
         } else {
           rowData[`image_${i}`] = ''; // Populate empty string if no image available
         }
@@ -218,16 +255,16 @@ const Couristan = () => {
     });
   
     // Add data to the Excel instance
-    excel.addSheet('Couristan').addColumns(excelColumns).addDataSource(excelDataSource, { str2Percent: true });
+    excel.addSheet('Prestige').addColumns(excelColumns).addDataSource(excelDataSource, { str2Percent: true });
   
     // Save the Excel file
-    excel.saveAs('Couristan.xlsx');
+    excel.saveAs('Prestige.xlsx');
   };
   
   const handleStartScraping = async () => {
     setLoading(true);
     info();
-    axios.get('https://scrapingback.onrender.com/couristan/start_scraping')
+    axios.get('https://scrapingback.onrender.com/fibreworks/start_scraping')
       .then(async res => {
         if(res.data.success){
           setHistory(res.data.data.history)
@@ -295,8 +332,8 @@ const Couristan = () => {
       return itemDate >= startDate && itemDate <= endDate;
     });
     if(filtered.length===0){
-       setNoDataMessage(`No Products that matched in Date Picker`)
-    }
+      setNoDataMessage(`No Products that matched in Date Picker`)
+   }
   
     setPagination(prevPagination => ({
       ...prevPagination,
@@ -317,7 +354,6 @@ const Couristan = () => {
     if(filtered.length===0){
       setNoDataMessage(`No Products that searched`)
    }
-  
     setPagination(prevPagination => ({
       ...prevPagination,
       current: 1, // Reset pagination to the first page
@@ -331,7 +367,7 @@ const Couristan = () => {
       setData(filteredData);
       return;
     }
-    const filtered = filteredData.filter((item) => item.construction === value);
+    const filtered = filteredData.filter((item) => item.fiberType === value);
     setPagination(prevPagination => ({
       ...prevPagination,
       current: 1, // Reset pagination to the first page
@@ -341,7 +377,7 @@ const Couristan = () => {
   };
   // const formatData = () => {
   //   setLoading(true);
-  //   axios.get('https://scrapingback.onrender.com/couristan/delete_data')
+  //   axios.get('https://scrapingback.onrender.com/fibreworks/delete_data')
   //     .then(async res => {
   //       setLoading(false);
   //       message.success(res.data.message);
@@ -384,7 +420,7 @@ const Couristan = () => {
         return itemDate === scrapingDate
       })
       const addedAccount = addedData.filter((item) => {
-        return (item.url.new === false || item.url.new === true) && item.url.deleted ===false;
+        return (item.url.new === false || item.url.new === true )&& item.url.deleted ===false;
       }).length;
       const deletedAccount = deletedData.filter((item)=>{
         return item.url.deleted === true
@@ -393,64 +429,60 @@ const Couristan = () => {
     }
     setModalData(historyData);
   }
-  const modalControl = () => {
+  const modalContrl = ()=>{
     setModal2Open(true);
-    historyShow()
+    historyShow();
   }
   return (
     <>
       {
         contextHolder
       }
-      <div style={{position:"fixed",zIndex:"100",top:"64px",padding: "0px 20px", justifyContent: "space-between",backgroundColor:"white", display:"flex",width:"87vw"}}>
-        <div style={{display:"flex"}}>
-          <div>
-            <Select
-              disabled={loading}
-              defaultValue="all"
-              style={{ width: 120 }}
-              onChange={(filter) => changeFilter(filter)}
-              options={[
-                { value: 'new', label: 'New' },
-                { value: 'deleted', label: 'Deleted' },
-                { value: 'all', label: 'All' },
-              ]}
+      <div>
+        <div style={{position:"fixed",zIndex:"100",top:"64px",padding: "0px 20px", justifyContent: "space-between",backgroundColor:"white", display:"flex",width:"87vw"}}>
+          <div style={{display:"flex"}}>
+            <div>
+              <Select
+                disabled={loading}
+                defaultValue="all"
+                style={{ width: 120 }}
+                onChange={(filter) => changeFilter(filter)}
+                options={[
+                  { value: 'new', label: 'New' },
+                  { value: 'deleted', label: 'Deleted' },
+                  { value: 'all', label: 'All' },
+                ]}
+              />
+              <Input
+              disabled = {loading}
+              placeholder="Search Name or SKU"
+              onChange={handleSearch}
+              style={{ width: 120}}
             />
-            <Input
-            disabled = {loading}
-            placeholder="Search Name or SKU"
-            onChange={handleSearch}
-            style={{ width: 120}}
-          />
-          </div>
 
+            </div>
+            <div>
+              <RangePicker style = {{width:150}} onChange={handleDateRangeChange} disabled={loading}/>
+              <Select defaultValue="all" disabled = {loading} onChange={handleBrandChange} style={{ width: 150}}>
+                <Option value="all">All Fiber</Option>
+                <Option value="Wool">Wool</Option>
+                <Option value="Sisal- Classic">Sisal- Classic</Option>
+                <Option value="Wool and Sisal">Manta</Option>
+                <Option value="Wool Blends">Wool Blends</Option>
+                <Option value="Sisal- Designer">Sisal- Designer</Option>
+              </Select>
+
+            </div>
+          </div>
           <div>
-          <RangePicker onChange={handleDateRangeChange} style={{width:150}} disabled={loading}/>
-          <Select defaultValue="all" disabled = {loading} onChange={handleBrandChange} style={{ width: 150}}>
-            <Option value="all">All Construction</Option>
-            <Option value="Hand-Tufted Loop Pile">Hand-Tufted Loop Pile</Option>
-            <Option value="Face-to-Face Woven Wilton">Face-to-Face Woven Wilton</Option>
-            <Option value="Hand-Loomed Loop Pile">Hand-Loomed Loop Pile</Option>
-            <Option value="Hand-Loomed Flatweave">Hand-Loomed Flatweave</Option>
-            <Option value="Hand-Loomed, Tip-Sheared Pile">Hand-Loomed, Tip-Sheared Pile</Option>
-            <Option value="Woven Writon Loop Pile">Woven Writon Loop Pile</Option>
-            <Option value="Hand-Loomed Cut and Loop Pile">Hand-Loomed Cut and Loop Pile</Option>
-            <Option value="Structured Flatwoven">Structured Flatwoven</Option>
-            <Option value="Face-to-Face Woven Wilton High/Low Cut-Pile">Face-to-Face Woven Wilton High/Low Cut-Pile</Option>
-          </Select>
-
-          </div>
-
-        </div>
-        <div>
-          <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
-          <Button type='primary' disabled={loading} style={{ margin: "0px 10px",width:130}} onClick={handleStartScraping}>Start Scraping</Button>
-          {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
-          <Button type="primary" onClick={modalControl} disabled = {loading}>
+            <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
+            <Button type='primary' disabled={loading} style={{ margin: "0px 10px",width:130}} onClick={handleStartScraping}>Start Scraping</Button>
+            {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
+            <Button type="primary" onClick={modalContrl} disabled = {loading}>
               Scraping History
             </Button>
             <Modal
-              title="History that scrape in Couristan page"
+              title="History that scrape in FibreWorks page"
               centered
               footer = "Please use DatePicker Filter Function to see more detail product information"
 
@@ -462,33 +494,34 @@ const Couristan = () => {
                 dataSource={modalData}
                 key="2"
                 columns={[
-                  { title: 'Scraping Date', dataIndex: 'scrapingDate', key: 'scrapingDate',align:"center" },
+                  { title: 'Scraping Date', dataIndex: 'scrapingDate', key: 'scrapingDate', align:"center"},
                   { title: 'Added Amount', dataIndex: 'addedAccount', key: 'addedAccount',align:"center"},
                   { title: 'Deleted Amount', dataIndex: 'deletedAccount', key: 'deletedAccount',align:"center"}, 
                 ]}
                 pagination={false} // Disable pagination if all data fits in the modal
               />
             </Modal>
+          </div>
         </div>
-        
+        <Table
+          key="1"
+          style={{ margin: "0px 15px 15px 15px" }}
+          ref={tableRef}
+          loading={loading}
+          columns={columns}
+          dataSource={data.map(product => ({ ...product, date:moment(product.url.updatedAt).format("YYYY-MM-DD"),url: product.url.url, key: product._id, addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '' }))}
+          pagination={{
+            ...pagination,
+            onChange: handleChange
+          }}
+          locale={{
+            emptyText: noDataMessage
+          }}
+          />
+
       </div>
-      <Table
-        style={{ margin: "15px"}}
-        key="1"
-        ref={tableRef}
-        loading={loading}
-        columns={columns}
-        dataSource={data.map(product => ({ ...product,date:product.url.updatedAt,url: product.url.url, key: product._id, addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '' }))}
-        pagination={{
-          ...pagination,
-          onChange: handleChange
-        }}
-        locale={{
-          emptyText: noDataMessage
-        }}
-      />
     </>
   )
 };
 
-export default Couristan;
+export default Fibre;
