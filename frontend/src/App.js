@@ -10,8 +10,7 @@ import {
   MenuUnfoldOutlined,
   SkinOutlined ,
   SketchOutlined,
-  GitlabOutlined
-  
+  ProductOutlined
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 
@@ -48,7 +47,7 @@ const App = () => {
                   Couristan
                 </Link>
               </Menu.Item>
-              <Menu.Item key="3" icon={<GitlabOutlined />}>
+              <Menu.Item key="3" icon={<ProductOutlined />}>
                 <Link to="/fibreworks" onClick={(e) => changeHeader("FibreWorks",e)}>
                   FibreWorks
                 </Link>
