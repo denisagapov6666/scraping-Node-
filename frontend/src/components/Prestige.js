@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, message, Select, Button, Input, DatePicker,Modal} from 'antd';
+import { Table, message, Select, Button, Input, DatePicker,Modal,Badge} from 'antd';
 import axios from 'axios';
 import { Excel } from "antd-table-saveas-excel";
 import moment from 'moment';
@@ -18,29 +18,18 @@ const columns = [
     width: 150,
     render: (text, record) => {
       const { productSku, url, addRemove } = record;
+      const ribbonText = addRemove === "new" ? "New" : addRemove === "deleted" ? "Removed" : "";
+      const ribbonColor = addRemove === "new" ? "green" : addRemove === "deleted" ? "red" : "blue"; // Default color
       return (
-        <div style={{ position: 'relative', width: 'fit-content', height: 'fit-content' }}>
-          <span 
-            style={{
-              position: 'absolute',
-              top: "-25px",
-              left: 0,
-              // transform: 'rotate(-45deg)',
-              transformOrigin: 'top left',
-              backgroundColor: addRemove === "new" ? 'green' : addRemove === "deleted" ? 'red' : '',
-              padding: '2px 5px',
-              color: 'white',
-            }}
-          >
-            {addRemove === "new" ? 'New' : addRemove === "deleted" ? 'Removed':""}
-          </span>
+        <>
+          <Badge.Ribbon style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
           <a style={{ textTransform: 'uppercase', marginLeft: 20 }} href={url + '?sku=' + productSku} target="_blank" rel="noopener noreferrer">{productSku}</a>
-        </div>
+        </>
       );
     },
     fixed: "left",
-    align:"center"
-  },
+    align: "center"
+  },  
   {
     title: 'Product Name',
     dataIndex: 'productName',
@@ -456,6 +445,7 @@ const Prestige = ({scrollvalue}) => {
       }
       <div>
         <div style={{position:"fixed",zIndex:"100",top:"64px",padding: "0px 20px", justifyContent: "space-between",backgroundColor:"white", display:"flex",width:"87vw"}}>
+      
           <div style={{display:"flex"}}>
             <div>
               <Select
@@ -522,6 +512,7 @@ const Prestige = ({scrollvalue}) => {
           style={{ margin: "0px 15px 15px 15px" }}
           ref={tableRef}
           loading={loading}
+          bordered
           columns={columns}
           dataSource={data.map(product => ({ ...product, date:moment(product.url.updatedAt).format("YYYY-MM-DD"),url: product.url.url, key: product._id, addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '' }))}
           pagination={{

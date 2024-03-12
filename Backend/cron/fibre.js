@@ -9,7 +9,7 @@ const ProductModel = require('../models/fibre/ProductModel');
 const URLModel = require('../models/fibre/URLModel');
 const RequestModel = require("../models/RequestModel");
 
-const fibreCronJob = () => cron.schedule('12 0 * * 6', async () => {
+const fibreCronJob = () => cron.schedule('12 0 * * 4', async () => {
     const isScraping = await RequestModel.findOne({ state: true });
     if (isScraping) {
         console.log('Another user or process is currently scraping. Please wait.');
