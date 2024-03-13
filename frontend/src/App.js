@@ -8,9 +8,6 @@ import './index.css';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  SkinOutlined ,
-  SketchOutlined,
-  ProductOutlined
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 
@@ -37,17 +34,17 @@ const App = () => {
               mode="inline"
               defaultSelectedKeys={['1']}
             >
-              <Menu.Item key="1" icon={<SkinOutlined />}>
+              <Menu.Item key="1" icon={<img src='./prestige.png' alt='prestige' width="14px"/>}>
                 <Link to="/" onClick={(e) => changeHeader("Prestige",e)}>
                   Prestige
                 </Link>
               </Menu.Item>
-              <Menu.Item key="2" icon={<SketchOutlined />}>
+              <Menu.Item key="2" icon={<img src='./couristan.png' width="14px" alt='couristan'/>}>
                 <Link to="/couristan" onClick={(e) => changeHeader("Couristan",e)}>
                   Couristan
                 </Link>
               </Menu.Item>
-              <Menu.Item key="3" icon={<ProductOutlined />}>
+              <Menu.Item key="3" icon={<img  src='./fibre.png' alt='fibre' width="14px"/>}>
                 <Link to="/fibreworks" onClick={(e) => changeHeader("FibreWorks",e)}>
                   FibreWorks
                 </Link>
