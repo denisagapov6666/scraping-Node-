@@ -46,7 +46,7 @@ module.exports = async () => {
     console.log("Get Urls:");
     try {
         // Fetch URLs from the homepage
-        const URL = "https://fibreworks.com/collections-fibreworks/";
+        const URL = "https://fibreworks.com/collections/view-all/";
         const response = await axios.get(URL);
         const $ = cheerio.load(response.data);
         const links = $(".collection__colors .color__item a");
