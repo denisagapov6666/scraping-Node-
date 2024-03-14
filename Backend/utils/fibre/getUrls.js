@@ -50,7 +50,6 @@ module.exports = async () => {
         const response = await axios.get(URL);
         const $ = cheerio.load(response.data);
         const links = $(".collection__colors .color__item a");
-        console.log(links)
 
         if (links.length > 0) {
             const urlsInLinks = links.toArray().map(element => "https://fibreworks.com"+$(element).attr('href'));

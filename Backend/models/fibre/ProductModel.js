@@ -66,6 +66,9 @@ const ProductSchema = new Schema({
     construction: {
         type: String
     },
+    family: {
+        type: String
+    },
     imageUrls: [
         {
             type: String

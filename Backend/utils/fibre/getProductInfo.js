@@ -19,47 +19,50 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
         await browser.close();
 
         const $ = cheerio.load(html);
-
+        
         const productName = $('.product__banner-title').text().trim();
         const productSku = url.split('=')[1];
         const collection = $('li.meta__item.meta__item--collection span.meta__value span').text().trim() || '';
         const fiberType = $('li.meta__item.meta__item--fiber span.meta__value span').text().trim() || '';
-        const color = $('li.meta__item.meta__item--color span.meta__value span').text().trim() || '';
+        const color = $('.rio-product-option-title-option-value').text().trim() || '';
         const pattern = $('li.meta__item.meta__item--pattern span.meta__value span').text().trim() || '';
         const patternRepeat = $('li.meta__item.meta__item--pattern-repeat span.meta__value span').text().trim() || '';
         const width = $('li.meta__item.meta__item--width span.meta__value span').text().trim() || '';
+        const family = $('li.meta__item.meta__item--family span.meta__value span').text().trim() || '';
         const fiberComposition = $('li.meta__item.meta__item--fiber-composition span.meta__value span').text().trim() || '';
         const backing = $('li.meta__item.meta__item--backing span.meta__value span').text().trim() || '';
         const construction = $('li.meta__item.meta__item--construction span.meta__value span').text().trim() || '';
-        
+        const productDescription = $('div.product__description p span').text().trim() || '';
+
         const imageUrls = [];
-        $('div.PwzrGrid-root div.PwzrGrid-item div.pwzrjss5 img').each(function () {
+        const images = $('img.pwzrjss3');
+        images.each(function () {
             imageUrls.push($(this).attr('src'));
         });
-
-        console.log("Scraped data:", {
-            category: "carpet",
-            brandName: "Fibreworks",
-            productSku,
-            productName,
-            productDescription: "",
-            collection,
-            color,
-            design: "",
-            price: "",
-            fiberType,
-            pattern,
+        const props = {
+            category:"carpet",
+            brandName:"Fibreworks", 
+            productSku, 
+            productName, 
+            productDescription, 
+            collection, 
+            color, 
+            design:'',
+            price: '',
+            fiberType, 
+            pattern, 
             patternRepeat,
-            height: "",
+            height: '',
             width,
             fiberComposition,
-            usage: "",
-            warranty: "",
-            style: "",
+            usage: '',
+            warranty: '', 
+            style:'', 
             backing,
+            family, 
             construction,
-            imageUrls,
-        });
+            imageUrls
+        };
         resolve(props);
     } catch (error) {
         reject(error);
