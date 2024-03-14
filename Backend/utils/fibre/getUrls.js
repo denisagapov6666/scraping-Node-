@@ -49,11 +49,11 @@ module.exports = async () => {
         const URL = "https://fibreworks.com/collections-fibreworks/";
         const response = await axios.get(URL);
         const $ = cheerio.load(response.data);
-        const links = $(".collections__colors .color__item .cover");
+        const links = $(".collection__colors .color__item a");
         console.log(links)
 
         if (links.length > 0) {
-            const urlsInLinks = links.toArray().map(element => $(element).attr('href'));
+            const urlsInLinks = links.toArray().map(element => "https://fibreworks.com"+$(element).attr('href'));
 
             // Check and update URLs in the database
             const data = await checkUrl(urlsInLinks);

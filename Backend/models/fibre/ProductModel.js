@@ -36,9 +36,6 @@ const ProductSchema = new Schema({
     fiberType: {
         type: String
     },
-    construction: {
-        type: String
-    },
     pattern: {
         type: String
     },
