@@ -23,7 +23,7 @@ const columns = [
       return (
         <>
           <Badge.Ribbon style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
-          <a style={{ textTransform: 'uppercase', marginLeft: 20 }} href={url + '?sku=' + productSku} target="_blank" rel="noopener noreferrer">{productSku}</a>
+          <a style={{ textTransform: 'uppercase', marginLeft: 20 }} href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
         </>
       );
     },
@@ -37,7 +37,7 @@ const columns = [
     width: 140,
     render:(productName,record)=>{
       return <div style={{textAlign:'center'}}>
-        <a  style={{textAlign:'center', textTransform: 'uppercase' }} href={record.url+'?sku='+record.productSku} target="_blank" rel="noopener noreferrer">{productName}</a>  
+        <a  style={{textAlign:'center', textTransform: 'uppercase' }} href={record.url} target="_blank" rel="noopener noreferrer">{productName}</a>  
       </div>
     },
     align:"center"
