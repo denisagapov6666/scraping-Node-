@@ -197,7 +197,7 @@ const Prestige = ({scrollvalue}) => {
   });
   useEffect(() => {
     setLoading(true)
-    axios.get(`https://scrapingback.onrender.com/prestige/get_products_info`)
+    axios.get(`http://localhost:8081/prestige/get_products_info`)
     .then(async res => {
       setHistory(res.data.history)
       setFinalScrapingDate(moment(res.data.history[res.data.history.length-1].createdAt).format("MMM DD YYYY"))
@@ -263,7 +263,7 @@ const Prestige = ({scrollvalue}) => {
   const handleStartScraping = async () => {
     setLoading(true);
     info();
-    axios.get('https://scrapingback.onrender.com/prestige/start_scraping')
+    axios.get('http://localhost:8081/prestige/start_scraping')
       .then(async res => {
         if(res.data.success){
           setHistory(res.data.data.history)
@@ -382,7 +382,7 @@ const Prestige = ({scrollvalue}) => {
   };
   // const formatData = () => {
   //   setLoading(true);
-  //   axios.get('https://scrapingback.onrender.com/prestige/delete_data')
+  //   axios.get('http://localhost:8081/prestige/delete_data')
   //     .then(async res => {
   //       setLoading(false);
   //       message.success(res.data.message);

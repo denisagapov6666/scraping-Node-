@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route,Link} from 'react-router-dom';
 import Prestige from './components/Prestige';
 import Couristan from './components/Couristan';
 import Fibre from './components/Fibre';
+import Kaya from "./components/Kaya"
 import "./App.css";
 import React, { useState } from 'react';
 import './index.css';
@@ -49,6 +50,11 @@ const App = () => {
                   FibreWorks
                 </Link>
               </Menu.Item>
+              <Menu.Item key="4" icon={<img src='https://kayacarpets.com/wp-content/uploads/2020/10/cropped-Group-168-32x32.png' width="20px" alt='kaya'/>}>
+                <Link to="/kaya" onClick={(e) => changeHeader("Kaya",e)}>
+                  Kaya
+                </Link>
+              </Menu.Item>
               
             </Menu>
         </Sider>
@@ -73,6 +79,7 @@ const App = () => {
                 <Route path = "/" exact element={<Prestige scrollvalue = {scrollvalue}/>}/>
                 <Route path = "/couristan"  element={<Couristan/>}/>
                 <Route path = "/fibreworks" element={<Fibre/>}/>
+                <Route path = "/kaya" element={<Kaya/>}/>
               </Routes>
           </Content>
         </Layout>
