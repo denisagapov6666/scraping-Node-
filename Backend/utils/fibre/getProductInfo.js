@@ -1,4 +1,4 @@
-const axios = require('axios');
+const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const mainGetProducts = require("../MainGetProducts");
 
@@ -6,10 +6,19 @@ const mainGetProducts = require("../MainGetProducts");
 const { resolve } = require('path');
 const scrapeData = (url) => new Promise(async (resolve, reject) => {
     try {
-        const res = await axios.get(url);
-        const $ = cheerio.load(res.data);
-        console.log($("noscript"))
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+        
+        // Set a higher timeout if necessary
+        await page.setDefaultNavigationTimeout(0);
 
+        await page.goto(url, { waitUntil: 'networkidle2' }); // Wait until there are no more than 2 network connections for 500 ms
+
+        const html = await page.content(); // Get the rendered HTML content
+
+        await browser.close();
+
+        const $ = cheerio.load(html);
         const productName = $('.product__banner-title').text().trim();
         const productSku = url.split('=')[1];
         const collection = $('li.meta__item.meta__item--collection span.meta__value span').text().trim() || '';

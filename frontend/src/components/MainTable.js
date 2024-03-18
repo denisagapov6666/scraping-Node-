@@ -28,7 +28,7 @@ const MainTable = ({current}) => {
   useEffect(() => {
 
     setLoading(true)
-    axios.get(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[0]}`)
+    axios.get(`http://localhost:8081/${settings[current.toString().toLowerCase()].api[0]}`)
       .then(async res => {
         setHistory(res.data.data.history)
         const historyLength = res.data.data.history.length;
@@ -56,7 +56,7 @@ const MainTable = ({current}) => {
   const handleStartScraping = async () => {
     setLoading(true);
     info();
-    axios.get(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[1]}`)
+    axios.get(`http://localhost:8081/${settings[current.toString().toLowerCase()].api[1]}`)
       .then(async res => {
         if (res.data.success) {
           setHistory(res.data.data.history)
