@@ -56,6 +56,7 @@ const MainTable = ({current}) => {
   const handleStartScraping = async () => {
     setLoading(true);
     info();
+    
     axios.get(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[1]}`)
       .then(async res => {
         if (res.data.success) {
