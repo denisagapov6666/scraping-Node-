@@ -1,49 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const URLModel = require('../../models/couristan/URLModel');
-const ProductModel = require('../../models/couristan/ProductModel');
-const historyModel = require("../../models/couristan/history");
-
-const checkUrl = async (newUrls) => {
-    try {
-        const allUrlModels = await URLModel.find();
-        const allUrls = allUrlModels.map(urlModel => urlModel.url);
-
-        const removedUrls = allUrls.filter(url => !newUrls.includes(url));
-        const addedUrls = newUrls.filter(url => !allUrls.includes(url));
-
-        let removedProductsLength = 0;
-        if(removedUrls.length>0){
-            // Update existing URLs in the database
-            await Promise.all(allUrlModels.map(async urlModel => {
-                if (removedUrls.includes(urlModel.url)) {
-                    const products = await ProductModel.find({ url: urlModel._id });
-                    removedProductsLength += products.length;
-                    await URLModel.findByIdAndUpdate(urlModel._id, { new: false, deleted: true });
-                }
-            }));
-        }
-        if(addedUrls.length>0){
-            await URLModel.updateMany({new:true}, {$set :{ new: false }});
-            // Add new URLs to the database
-            await Promise.all(addedUrls.map(async url => {
-                const newUrlModel = new URLModel({
-                    url,
-                    deleted: false,
-                });
-                await newUrlModel.save();
-            }));
-
-        }
-        await new historyModel({history:"#"}).save()
-
-
-
-        return {removed:removedProductsLength,isadded:addedUrls.length,isremoved:removedUrls.length};
-    } catch (error) {
-        console.error('Error updating URLs in database:', error);
-    }
-};
+const {checkUrl} = require("../MainCheckUrls");
+const site = "couristan";
 module.exports = async () => {
     let pageIndex = 1;
     try {
@@ -68,7 +26,7 @@ module.exports = async () => {
             }
             pageIndex++;
         }
-        return checkUrl(urls)
+        return await checkUrl(site,urls)
     } catch (error) {
         console.error('Error fetching brands:', error);
     }

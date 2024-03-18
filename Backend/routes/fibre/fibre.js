@@ -8,7 +8,6 @@ router.get("/get_products_info", fibreController.getProduct);
 
 router.get("/start_scraping", prestigeMiddleware.isScrapingByOtherUser, fibreController.startScraping)
 
-router.get("/delete_data", fibreController.deleteData);
 
 cronJob.fibreCronJob();
 

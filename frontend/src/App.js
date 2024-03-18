@@ -1,8 +1,5 @@
-import { BrowserRouter as Router, Routes, Route,Link} from 'react-router-dom';
-import Prestige from './components/Prestige';
-import Couristan from './components/Couristan';
-import Fibre from './components/Fibre';
-import Kaya from "./components/Kaya"
+import { BrowserRouter as Router} from 'react-router-dom';
+import MainTable from './components/MainTable';
 import "./App.css";
 import React, { useState } from 'react';
 import './index.css';
@@ -11,55 +8,43 @@ import {
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
-
+import { siteNames } from './utils/static';
 
 const { Header, Sider, Content } = Layout;
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [headerTitle,setHeaderTitle] = useState("Prestige");
-  const [scrollvalue,setScrollValue] = useState(0);
-  const changeHeader = (title,e) =>{
-    setHeaderTitle(title)
-  }
-  const changeScroll = (e)=>{
-    setScrollValue(e.target.scrollLeft);
+  const [headerTitle, setHeaderTitle] = useState("Prestige");
+  const changeHeader = (title) => {
+    setHeaderTitle(siteNames[title])
   }
   return (
-    <Layout  className="site-layout">
+    <Layout className="site-layout">
       <Router> {/* Wrap the Sider content with Router */}
         <Sider className="site-layout-sider" trigger={null} collapsible collapsed={collapsed}>
           <div className="logo" />
-            <Menu
-              theme="dark"
-              mode="inline"
-              defaultSelectedKeys={['1']}
-            >
-              <Menu.Item key="1" icon={<img src='./prestige.png' alt='prestige' width="20px"/>}>
-                <Link to="/" onClick={(e) => changeHeader("Prestige",e)}>
-                  Prestige
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="2" icon={<img src='./couristan.png' width="20px" alt='couristan'/>}>
-                <Link to="/couristan" onClick={(e) => changeHeader("Couristan",e)}>
-                  Couristan
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="3" icon={<img src='./fibre.svg' width="20px" alt='fibre'/>}>
-                <Link to="/fibreworks" onClick={(e) => changeHeader("FibreWorks",e)}>
-                  FibreWorks
-                </Link>
-              </Menu.Item>
-              <Menu.Item key="4" icon={<img src='https://kayacarpets.com/wp-content/uploads/2020/10/cropped-Group-168-32x32.png' width="20px" alt='kaya'/>}>
-                <Link to="/kaya" onClick={(e) => changeHeader("Kaya",e)}>
-                  Kaya
-                </Link>
-              </Menu.Item>
-              
-            </Menu>
+          <Menu
+            theme="dark"
+            mode="inline"
+            defaultSelectedKeys={['1']}
+          >
+            <Menu.Item key="1" icon={<img src='./prestige.png' alt='prestige' width="20px" />} onClick={() => changeHeader(0)}>
+              Prestige
+            </Menu.Item>
+            <Menu.Item key="2" icon={<img src='./couristan.png' width="20px" alt='couristan' />} onClick={() => changeHeader(1)}>
+              Couristan
+            </Menu.Item>
+            <Menu.Item key="4" icon={<img src='./kaya.png' width="20px" alt='kaya' />} onClick={() => changeHeader(3)}>
+              Kaya
+            </Menu.Item>
+            <Menu.Item key="3" icon={<img src='./fibre.svg' width="20px" alt='fibre' />} onClick={() => changeHeader(2)}>
+              FibreWorks
+            </Menu.Item>
+
+          </Menu>
         </Sider>
-        <Layout style={{backgroundColor:'white'}}>
-          <Header className="site-layout-header" style={{ padding: 0,fontSize:"20px",backgroundColor:"grey" }}>
+        <Layout style={{ backgroundColor: 'white' }}>
+          <Header className="site-layout-header" style={{ padding: 0, fontSize: "20px", backgroundColor: "grey" }}>
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
               className: 'trigger',
               onClick: () => setCollapsed(!collapsed),
@@ -70,17 +55,11 @@ const App = () => {
             className="site-layout-content"
             style={{
               minHeight: 280,
-              backgroundColor:"white",
-              marginTop:"110px"
+              backgroundColor: "white",
+              marginTop: "110px"
             }}
-            onScroll = {(e)=>changeScroll(e)}
-            >
-              <Routes>
-                <Route path = "/" exact element={<Prestige scrollvalue = {scrollvalue}/>}/>
-                <Route path = "/couristan"  element={<Couristan/>}/>
-                <Route path = "/fibreworks" element={<Fibre/>}/>
-                <Route path = "/kaya" element={<Kaya/>}/>
-              </Routes>
+          >
+            <MainTable current={headerTitle} />
           </Content>
         </Layout>
       </Router>

@@ -1,7 +1,8 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const URLModel = require('../../models/kaya/URLModel');
-const Product = require('../../models/kaya/ProductModel');
+
+const mainGetProducts = require("../MainGetProducts");
+
 
 const { resolve } = require('path');
 const scrapeData = (url) => new Promise(async (resolve, reject) => {
@@ -17,6 +18,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
             imageUrls.push($(this).attr('href'));
         });
         const props = {
+            site:"kaya",
             category: "carpet",
             brandName: "kaya",
             productSku:productName+"-"+productSku,
@@ -33,34 +35,8 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
     }
 })
 
-module.exports = () => {
-    console.log('Get Product Info:');
-    return new Promise(async resolve => {
-        try {
-            const allUrlModels = await URLModel.find({ new: true });
-            let count = 0;
 
-            const scrapingOneUrl = (i) => {
-                scrapeData(allUrlModels[i].url).then(async product => {
-                    const newProduct = new Product({ ...product, url: allUrlModels[i]._id });
-                    await newProduct.save().then(() => console.log(`${++count} product is saved.`));
-                  
-                    if (i < allUrlModels.length-1) {
-                        scrapingOneUrl(i + 1);
-                    } else {
-                        resolve();
-                    }
-
-                });
-            }
-            if (allUrlModels.length > 0) {
-                scrapingOneUrl(0);
-            } else {
-                console.log("end");
-                resolve();
-            }
-        } catch (error) {
-            console.log("Error fetching URL:", error);
-        }
-    })
+module.exports = async() => {
+    const site = "kaya";
+    await mainGetProducts.mainGetProducts(site,scrapeData);
 }

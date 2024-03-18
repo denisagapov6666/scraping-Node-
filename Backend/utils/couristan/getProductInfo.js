@@ -1,7 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const URLModel = require('../../models/couristan/URLModel');
-const Product = require('../../models/couristan/ProductModel');
+const mainGetProducts = require("../MainGetProducts");
 
 const { resolve } = require('path');
 const scrapeData = (url) => new Promise(async (resolve, reject) => {
@@ -18,7 +17,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
         const width = $(propArr[3]).text().split(":")[1]; //width      
         const repeat = $(propArr[4]).text().split(":")[1]; //repeat
        
-        const description =  $('.padding-left').contents().filter(function() {
+        const productDescription =  $('.padding-left').contents().filter(function() {
             return this.nodeType === 3;
         }).text().trim();
         const imageUrls = [];
@@ -27,6 +26,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
             imageUrls.push($(element).attr('src'));
         });
         const props = {
+            site:"couristan",
             category: "CARPET",
             brandName,
             productSku,
@@ -36,7 +36,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
             construction,
             width,
             repeat,
-            description,
+            productDescription,
             usage : "",
             price : "",
             imageUrls
@@ -48,34 +48,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
     }
 })
 
-module.exports = () => {
-    console.log('Get Product Info:');
-    return new Promise(async resolve => {
-        try {
-            const allUrlModels = await URLModel.find({ new: true });
-            let count = 0;
-
-            const scrapingOneUrl = (i) => {
-                scrapeData(allUrlModels[i].url).then(async product => {
-                    const newProduct = new Product({ ...product, url: allUrlModels[i]._id });
-                    await newProduct.save().then(() => console.log(`${++count} product is saved.`));
-                  
-                    if (i < allUrlModels.length-1) {
-                        scrapingOneUrl(i + 1);
-                    } else {
-                        resolve();
-                    }
-
-                });
-            }
-            if (allUrlModels.length > 0) {
-                scrapingOneUrl(0);
-            } else {
-                console.log("end");
-                resolve();
-            }
-        } catch (error) {
-            console.log("Error fetching URL:", error);
-        }
-    })
+module.exports = async() => {
+    const site = "couristan";
+    await mainGetProducts.mainGetProducts(site,scrapeData);
 }

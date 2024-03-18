@@ -1,7 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const URLModel = require('../../models/prestige/URLModel');
-const Product = require('../../models/prestige/ProductModel');
+const {mainGetProducts} = require("../MainGetProducts");
 
 const { resolve } = require('path');
 const scrapeData = (url) => new Promise(async (resolve, reject) => {
@@ -12,7 +11,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
         const productName = $('div.pdp-content h3').first().text();
         const texture = $('#pdpdata-texture').text();
         const design = $('#pdpdata-design').text();
-        const fiber = $('#pdpdata-fiber_content').text();
+        const fiberType = $('#pdpdata-fiber_content').text();
         const construction = $('#pdpdata-construction').text();
         const origin = $('#pdpdata-country_of_origin').text();
         const width = $('#pdpdata-repeat_width_length').text();
@@ -37,6 +36,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
             const json_data = imageData.substring(start_index, end_index);
             const parsed_data = JSON.parse(json_data);
             const props = {
+                site:"prestige",
                 category: "CARPET",
                 brandName: "PRESTIGEMILLS",
                 productSku,
@@ -45,7 +45,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
                 color,
                 texture,
                 design,
-                fiber,
+                fiberType,
                 construction,
                 origin,
                 width,
@@ -62,9 +62,9 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
                         const height = Math.floor((642 * image.dy) / image.dx);
                         return `https://s7d2.scene7.com/is/image/${image.i.n}?wid=${width}&hei=${height}`;
                     })
-                    props.images = imageUrls;
+                    props.imageUrls = imageUrls;
                 } else {
-                    props.images = api;
+                    props.imagesUrls = api;
                 }
                 retValue.push(props)
                 if (i === variants.length - 1) resolve(retValue);
@@ -79,35 +79,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
     }
 })
 
-module.exports = () => {
-    console.log('Get Product Info:');
-    return new Promise(async resolve => {
-        try {
-            const allUrlModels = await URLModel.find({ new: true });
-            let count = 0;
-
-            const scrapingOneUrl = (i) => {
-                scrapeData(allUrlModels[i].url).then(async products => {
-                    products.forEach(async element => {
-                        const newProduct = new Product({ ...element, url: allUrlModels[i]._id });
-                        await newProduct.save().then(() => console.log(`${++count} product is saved.`));
-                    });
-                    if (i < allUrlModels.length-1) {
-                        scrapingOneUrl(i + 1);
-                    } else {
-                        resolve();
-                    }
-
-                });
-            }
-            if (allUrlModels.length > 0) {
-                scrapingOneUrl(0);
-            } else {
-                console.log("end");
-                resolve();
-            }
-        } catch (error) {
-            console.log("Error fetching URL:", error);
-        }
-    })
+module.exports = async() => {
+    const site = "prestige";
+    await mainGetProducts(site,scrapeData);
 }

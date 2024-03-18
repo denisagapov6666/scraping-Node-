@@ -1,18 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, message, Select, Button, Input, DatePicker, Modal, Badge } from 'antd';
+import { Table, message, Select, Button, Input, DatePicker, Modal } from 'antd';
 import axios from 'axios';
 import { Excel } from "antd-table-saveas-excel";
 import moment from 'moment';
-import { couristan } from '../utils/static'
+import { settings } from '../utils/static'
 import 'antd/dist/reset.css';
-
-const columns = couristan.columns
-
 const { RangePicker } = DatePicker;
-const { Option } = Select;
 
-const Couristan = () => {
-
+const MainTable = ({current}) => {
+  
+  const columns = settings[current.toString().toLowerCase()].columns
   const tableRef = useRef(null);
 
   const [loading, setLoading] = useState(true);
@@ -29,12 +26,17 @@ const Couristan = () => {
   const [noDataMessage, setNoDataMessage] = useState('');
 
   useEffect(() => {
+
     setLoading(true)
-    axios.get(`http://localhost:8081/${couristan.api}`)
+    axios.get(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[0]}`)
       .then(async res => {
         setHistory(res.data.data.history)
-        setFinalScrapingDate(moment(res.data.data.history[res.data.data.history.length - 1].createdAt).format("MMM DD YYYY"))
-
+        const historyLength = res.data.data.history.length;
+        if(historyLength>0){
+          const lastHistoryDate = res.data.data.history[historyLength - 1].createdAt;
+          const finalScrapingDate = moment(lastHistoryDate).format("MMM DD YYYY");
+          setFinalScrapingDate(finalScrapingDate);
+        }
         // Make sure `res.data.total` correctly represents the total number of items available in the backend
         setPagination(prevPagination => ({
           ...prevPagination,
@@ -46,58 +48,15 @@ const Couristan = () => {
         setLoading(false);
       });
 
-  }, [])
+  }, [current])
 
   const handleChange = (current, pageSize) => {
     setPagination({ ...pagination, current, pageSize })
   };
-
-  const handleDownloadClick = () => {
-    const excel = new Excel();
-
-    // Define columns for Excel
-    const excelColumns = columns
-      .filter(column => column.title !== 'Thumb Image' && column.title !== 'Other Images') // Exclude Thumb Image and Other Images columns
-      .map(column => ({ title: column.title, dataIndex: column.dataIndex, key: column.key }));
-
-    // Add image columns
-    for (let i = 0; i <= 5; i++) {
-      excelColumns.push({ title: `Image ${i + 1}`, dataIndex: `image_${i}`, key: `image_${i}` });
-    }
-
-    // Add data source
-    const excelDataSource = data.map(product => {
-      const rowData = {
-        key: product._id,
-        addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '',
-        url: product.url.url,
-        ...product
-      };
-      rowData.date = moment(product.url.updatedAt).format("YYYY-MM-DD");
-
-      // Populate image data for each image column
-      for (let i = 0; i <= 5; i++) {
-        if (product.imageUrls[i]) {
-          rowData[`image_${i}`] = product.imageUrls[i];
-        } else {
-          rowData[`image_${i}`] = ''; // Populate empty string if no image available
-        }
-      }
-
-      return rowData;
-    });
-
-    // Add data to the Excel instance
-    excel.addSheet('Couristan').addColumns(excelColumns).addDataSource(excelDataSource, { str2Percent: true });
-
-    // Save the Excel file
-    excel.saveAs('Couristan.xlsx');
-  };
-
   const handleStartScraping = async () => {
     setLoading(true);
     info();
-    axios.get('http://localhost:8081/couristan/start_scraping')
+    axios.get(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[1]}`)
       .then(async res => {
         if (res.data.success) {
           setHistory(res.data.data.history)
@@ -124,6 +83,48 @@ const Couristan = () => {
         }
       })
   }
+  const handleDownloadClick = () => {
+    const excel = new Excel();
+
+    // Define columns for Excel
+    const excelColumns = columns
+      .filter(column => column.title !== 'Thumb Image' && column.title !== 'Other Images') // Exclude Thumb Image and Other Images columns
+      .map(column => ({ title: column.title, dataIndex: column.dataIndex, key: column.key }));
+
+    // Add image columns
+    for (let i = 0; i <= 10; i++) {
+      excelColumns.push({ title: `Image ${i + 1}`, dataIndex: `image_${i}`, key: `image_${i}` });
+    }
+
+    // Add data source
+    const excelDataSource = data.map(product => {
+      const rowData = {
+        key: product._id,
+        addRemove: product.url.new ? 'new' : product.url.deleted ? 'deleted' : '',
+        url: product.url.url,
+        ...product
+      };
+      rowData.date = moment(product.url.updatedAt).format("YYYY-MM-DD");
+
+      // Populate image data for each image column
+      for (let i = 0; i <= 10; i++) {
+        if (product.imageUrls[i]) {
+          rowData[`image_${i}`] = product.imageUrls[i];
+        } else {
+          rowData[`image_${i}`] = ''; // Populate empty string if no image available
+        }
+      }
+
+      return rowData;
+    });
+
+    // Add data to the Excel instance
+    excel.addSheet(current).addColumns(excelColumns).addDataSource(excelDataSource, { str2Percent: true });
+
+    // Save the Excel file
+    excel.saveAs(`${current}.xlsx`);
+  };
+  
   const changeFilter = (filter) => {
     let filteredData = originData;
     if (filter === "new") {
@@ -195,29 +196,6 @@ const Couristan = () => {
     }));
     setData(filtered);
   };
-  const handleBrandChange = (value) => {
-    let filteredData = originData;
-    if (value === 'all') {
-      setData(filteredData);
-      return;
-    }
-    const filtered = filteredData.filter((item) => item.construction === value);
-    setPagination(prevPagination => ({
-      ...prevPagination,
-      current: 1, // Reset pagination to the first page
-      total: filtered.length // Update total count based on filtered data length
-    }));
-    setData(filtered);
-  };
-  // const formatData = () => {
-  //   setLoading(true);
-  //   axios.get('http://localhost:8081/couristan/delete_data')
-  //     .then(async res => {
-  //       setLoading(false);
-  //       message.success(res.data.message);
-  //       window.location.reload();
-  //     })
-  // };
   const [messageApi, contextHolder] = message.useMessage();
 
   const info = () => {
@@ -296,19 +274,6 @@ const Couristan = () => {
 
           <div>
             <RangePicker onChange={handleDateRangeChange} style={{ width: 150 }} disabled={loading} />
-            <Select defaultValue="all" disabled={loading} onChange={handleBrandChange} style={{ width: 150 }}>
-              <Option value="all">All Construction</Option>
-              <Option value="Hand-Tufted Loop Pile">Hand-Tufted Loop Pile</Option>
-              <Option value="Face-to-Face Woven Wilton">Face-to-Face Woven Wilton</Option>
-              <Option value="Hand-Loomed Loop Pile">Hand-Loomed Loop Pile</Option>
-              <Option value="Hand-Loomed Flatweave">Hand-Loomed Flatweave</Option>
-              <Option value="Hand-Loomed, Tip-Sheared Pile">Hand-Loomed, Tip-Sheared Pile</Option>
-              <Option value="Woven Writon Loop Pile">Woven Writon Loop Pile</Option>
-              <Option value="Hand-Loomed Cut and Loop Pile">Hand-Loomed Cut and Loop Pile</Option>
-              <Option value="Structured Flatwoven">Structured Flatwoven</Option>
-              <Option value="Face-to-Face Woven Wilton High/Low Cut-Pile">Face-to-Face Woven Wilton High/Low Cut-Pile</Option>
-            </Select>
-
           </div>
 
         </div>
@@ -362,4 +327,4 @@ const Couristan = () => {
   )
 };
 
-export default Couristan;
+export default MainTable;

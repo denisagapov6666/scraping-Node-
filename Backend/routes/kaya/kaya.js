@@ -8,7 +8,6 @@ router.get("/get_products_info", kayaController.getProduct);
 
 router.get("/start_scraping", prestigeMiddleware.isScrapingByOtherUser, kayaController.startScraping)
 
-router.get("/delete_data", kayaController.deleteData);
 
 cronJob.kayaCronJob();
 

@@ -7,7 +7,6 @@ import moment from 'moment';
 import 'antd/dist/reset.css';
 
 const { RangePicker } = DatePicker;
-const { Option } = Select;
 
 
 const columns = [
@@ -115,7 +114,7 @@ const Kaya = () => {
 
   useEffect(() => {
     setLoading(true)
-    axios.get(`https://scrapingback.onrender.com/kaya/get_products_info`)
+    axios.get(`http://localhost:8081/kaya/get_products_info`)
     .then(async res => {
       setHistory(res.data.data.history)
       if(res.data.data.history.length>0){
@@ -185,7 +184,7 @@ const Kaya = () => {
   const handleStartScraping = async () => {
     setLoading(true);
     info();
-    axios.get('https://scrapingback.onrender.com/kaya/start_scraping')
+    axios.get('http://localhost:8081/kaya/start_scraping')
       .then(async res => {
         if(res.data.success){
           setHistory(res.data.data.history)
@@ -285,7 +284,7 @@ const Kaya = () => {
   };
   // const formatData = () => {
   //   setLoading(true);
-  //   axios.get('https://scrapingback.onrender.com/kaya/delete_data')
+  //   axios.get('http://localhost:8081/kaya/delete_data')
   //     .then(async res => {
   //       setLoading(false);
   //       message.success(res.data.message);

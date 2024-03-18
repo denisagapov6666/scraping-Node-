@@ -1,25 +1,15 @@
-const puppeteer = require('puppeteer');
+const axios = require('axios');
 const cheerio = require('cheerio');
-const URLModel = require('../../models/fibre/URLModel');
-const Product = require('../../models/fibre/ProductModel');
+const mainGetProducts = require("../MainGetProducts");
+
 
 const { resolve } = require('path');
 const scrapeData = (url) => new Promise(async (resolve, reject) => {
     try {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        
-        // Set a higher timeout if necessary
-        await page.setDefaultNavigationTimeout(0);
+        const res = await axios.get(url);
+        const $ = cheerio.load(res.data);
+        console.log($("noscript"))
 
-        await page.goto(url, { waitUntil: 'networkidle2' }); // Wait until there are no more than 2 network connections for 500 ms
-
-        const html = await page.content(); // Get the rendered HTML content
-
-        await browser.close();
-
-        const $ = cheerio.load(html);
-        
         const productName = $('.product__banner-title').text().trim();
         const productSku = url.split('=')[1];
         const collection = $('li.meta__item.meta__item--collection span.meta__value span').text().trim() || '';
@@ -40,26 +30,27 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
             imageUrls.push($(this).attr('src'));
         });
         const props = {
-            category:"carpet",
-            brandName:"Fibreworks", 
-            productSku, 
-            productName, 
-            productDescription, 
-            collection, 
-            color, 
-            design:'',
+            site: "fibre",
+            category: "carpet",
+            brandName: "Fibreworks",
+            productSku,
+            productName,
+            productDescription,
+            collection,
+            color,
+            design: '',
             price: '',
-            fiberType, 
-            pattern, 
+            fiberType,
+            pattern,
             patternRepeat,
             height: '',
             width,
             fiberComposition,
             usage: '',
-            warranty: '', 
-            style:'', 
+            warranty: '',
+            style: '',
             backing,
-            family, 
+            family,
             construction,
             imageUrls
         };
@@ -70,34 +61,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
     }
 })
 
-module.exports = () => {
-    console.log('Get Product Info:');
-    return new Promise(async resolve => {
-        try {
-            const allUrlModels = await URLModel.find({ new: true });
-            let count = 0;
-
-            const scrapingOneUrl = (i) => {
-                scrapeData(allUrlModels[i].url).then(async product => {
-                    const newProduct = new Product({ ...product, url: allUrlModels[i]._id });
-                    await newProduct.save().then(() => console.log(`${++count} product is saved.`));
-                  
-                    if (i < allUrlModels.length-1) {
-                        scrapingOneUrl(i + 1);
-                    } else {
-                        resolve();
-                    }
-
-                });
-            }
-            if (allUrlModels.length > 0) {
-                scrapingOneUrl(0);
-            } else {
-                console.log("end");
-                resolve();
-            }
-        } catch (error) {
-            console.log("Error fetching URL:", error);
-        }
-    })
+module.exports = async() => {
+    const site = "fibre";
+    await mainGetProducts.mainGetProducts(site, scrapeData);
 }

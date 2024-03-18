@@ -191,7 +191,7 @@ const Fibre = ({scrollvalue}) => {
   });
   useEffect(() => {
     setLoading(true)
-    axios.get(`https://scrapingback.onrender.com/fibreworks/get_products_info`)
+    axios.get(`http://localhost:8081/fibreworks/get_products_info`)
     .then(async res => {
       setHistory(res.data.history)
       if(res.data.history.length>0){
@@ -260,7 +260,7 @@ const Fibre = ({scrollvalue}) => {
   const handleStartScraping = async () => {
     setLoading(true);
     info();
-    axios.get('https://scrapingback.onrender.com/fibreworks/start_scraping')
+    axios.get('http://localhost:8081/fibreworks/start_scraping')
       .then(async res => {
         if(res.data.success){
           setHistory(res.data.data.history)
@@ -373,7 +373,7 @@ const Fibre = ({scrollvalue}) => {
   };
   // const formatData = () => {
   //   setLoading(true);
-  //   axios.get('https://scrapingback.onrender.com/fibreworks/delete_data')
+  //   axios.get('http://localhost:8081/fibreworks/delete_data')
   //     .then(async res => {
   //       setLoading(false);
   //       message.success(res.data.message);

@@ -8,8 +8,6 @@ router.get("/get_products_info", prestigeController.getProduct);
 
 router.get("/start_scraping", prestigeMiddleware.isScrapingByOtherUser, prestigeController.startScraping)
 
-router.get("/delete_data", prestigeController.deleteData);
-
 cronJob.prestigeCronJob();
 
 module.exports = router;
