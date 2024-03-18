@@ -8,6 +8,7 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
     try {
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
+        
         // Set a higher timeout if necessary
         await page.setDefaultNavigationTimeout(0);
 
