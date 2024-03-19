@@ -256,6 +256,7 @@ export const settings = {
         dataIndex: 'date',
         key: 'date',
         width: 150,
+        render: date => <span style={{ textTransform: 'uppercase' }}>{moment(date).format("YYYY-MM-DD")}</span>,
         align: "center"
       },
       {
@@ -409,6 +410,7 @@ export const settings = {
         dataIndex: 'date',
         key: 'date',
         width: 150,
+        render: date => <span style={{ textTransform: 'uppercase' }}>{moment(date).format("YYYY-MM-DD")}</span>,
         align: "center"
       },
       {
