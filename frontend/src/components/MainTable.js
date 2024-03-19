@@ -233,7 +233,7 @@ const MainTable = ({current}) => {
         return itemDate === scrapingDate
       })
       const addedAccount = addedData.filter((item) => {
-        return (item.url.new === false || item.url.new === true) && item.url.deleted === false;
+        return (item.url.new === true) && item.url.deleted === false;
       }).length;
       const deletedAccount = deletedData.filter((item) => {
         return item.url.deleted === true
