@@ -25,11 +25,11 @@ export const settings = {
               {
                 ribbonText && (
                   <>
-                    <Badge.Ribbon style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
+                    <Badge.Ribbon key = "1" style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
                   </>
                 )
               }
-              <a style={{ textTransform: 'uppercase', marginLeft: 20 }} href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
+              <a style={{ textTransform: 'uppercase', marginLeft: 20 }} key = "2" href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
             </>
           );
         },
@@ -143,11 +143,11 @@ export const settings = {
               {
                 ribbonText && (
                   <>
-                    <Badge.Ribbon style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
+                    <Badge.Ribbon key="1" style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
                   </>
                 )
               }
-              <a style={{ textTransform: 'uppercase', marginLeft: 20 }} href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
+              <a style={{ textTransform: 'uppercase', marginLeft: 20 }} key="2" href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
             </>
           );
         },
@@ -302,11 +302,11 @@ export const settings = {
               {
                 ribbonText && (
                   <>
-                    <Badge.Ribbon style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
+                    <Badge.Ribbon key="1" style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
                   </>
                 )
               }
-              <a style={{ textTransform: 'uppercase', marginLeft: 20 }} href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
+              <a style={{ textTransform: 'uppercase', marginLeft: 20 }} key ="2" href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
             </>
           );
         },
@@ -455,11 +455,11 @@ export const settings = {
               {
                 ribbonText && (
                   <>
-                    <Badge.Ribbon style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
+                    <Badge.Ribbon key = "1" style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
                   </>
                 )
               }
-              <a style={{ textTransform: 'uppercase', marginLeft: 20 }} href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
+              <a style={{ textTransform: 'uppercase', marginLeft: 20 }} key = "2" href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
             </>
           );
         },

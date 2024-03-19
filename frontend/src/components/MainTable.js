@@ -225,7 +225,7 @@ const MainTable = ({current}) => {
     for (let i = 0; i < history.length; i++) {
       const scrapingDate = moment(history[i].createdAt).format("YYYY-MM-DD");
       const addedData = originData.filter((item) => {
-        const itemDate = moment(item.url.createdAt).format("YYYY-MM-DD");
+        const itemDate = moment(item.url.updatedAt).format("YYYY-MM-DD");
         return itemDate === scrapingDate
       })
       const deletedData = originData.filter((item) => {
@@ -269,7 +269,7 @@ const MainTable = ({current}) => {
               disabled={loading}
               placeholder="Search Name or SKU"
               onChange={handleSearch}
-              style={{ width: 250 }}
+              style={{ width: 200 }}
             />
           </div>
 

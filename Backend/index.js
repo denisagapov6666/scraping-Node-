@@ -2,6 +2,7 @@ const express =  require('express');
 const cors = require("cors");
 const scarpingConnectDB = require("./config/db");
 
+
 const app = express();
 
 const routes = require("./routes/index");
