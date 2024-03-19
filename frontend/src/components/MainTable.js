@@ -56,7 +56,7 @@ const MainTable = ({current}) => {
   const handleStartScraping = async () => {
     setLoading(true);
     info();
-    
+
     axios.get(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[1]}`)
       .then(async res => {
         if (res.data.success) {
@@ -269,12 +269,12 @@ const MainTable = ({current}) => {
               disabled={loading}
               placeholder="Search Name or SKU"
               onChange={handleSearch}
-              style={{ width: 120 }}
+              style={{ width: 250 }}
             />
           </div>
 
           <div>
-            <RangePicker onChange={handleDateRangeChange} style={{ width: 150 }} disabled={loading} />
+            <RangePicker onChange={handleDateRangeChange} style={{ width: 250 }} disabled={loading} />
           </div>
 
         </div>
