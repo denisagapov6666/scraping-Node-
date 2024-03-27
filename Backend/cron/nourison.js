@@ -3,7 +3,7 @@ const getUrls = require('../utils/nourison/getUrls');
 const CronJob = require("./cronjob");
 
 const site = "nourison";
-const schedule = "7 0 * * 6";
+const schedule = "0 12 * * 6";
 
 const nourisonCronJob = () => {
     CronJob.CronJob(site,schedule, getProductInfo,getUrls)

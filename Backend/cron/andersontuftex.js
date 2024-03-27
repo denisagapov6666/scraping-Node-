@@ -3,7 +3,7 @@ const getUrls = require('../utils/andersontuftex/getUrls');
 const CronJob = require("./cronjob");
 
 const site = "andersontuftex";
-const schedule = "12 * * * 6";
+const schedule = "0 1 * * 6";
 
 const andersontuftexCronJob = () => {
     CronJob.CronJob(site,schedule, getProductInfo,getUrls)

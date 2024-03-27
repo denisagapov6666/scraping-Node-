@@ -14,8 +14,26 @@ const ProductSchema = new Schema({
     brandName: {
         type: String
     },
+    stainTreatment: {
+        type: String
+    },
     productSku: {
         type: String
+    },
+    thickness:{
+        type:String
+    },
+    dimension:{
+        type:String
+    },
+    bevel:{
+        type:String
+    },
+    finishing:{
+        type:String
+    },
+    lockingSystem:{
+        type:String
     },
     productName: {
         type: String
@@ -104,6 +122,13 @@ const ProductSchema = new Schema({
     construction: {
         type: String
     },
+    finish: {
+        type: String
+    },
+    coverage: {
+        type: String
+    },
+
     removed: {
         type: Boolean,
     },

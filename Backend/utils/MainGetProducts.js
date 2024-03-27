@@ -12,14 +12,17 @@ const mainGetProducts = (site,scrapeData) => {
             const scrapingOneUrl = async (i) => {
                 console.log(allUrlModels[i].url)
                 const products = await scrapeData(allUrlModels[i].url)
-                if(Array.isArray(products))
-                    products.forEach(async product => {
-                        const newProduct = new Product({ ...product, url: allUrlModels[i]._id });
+                if(products){
+
+                    if(Array.isArray(products))
+                        products.forEach(async product => {
+                            const newProduct = new Product({ ...product, url: allUrlModels[i]._id });
+                            await newProduct.save().then(() => console.log(`${++count} product is saved.`));
+                        })
+                    else {
+                        const newProduct = new Product({ ...products, url: allUrlModels[i]._id });
                         await newProduct.save().then(() => console.log(`${++count} product is saved.`));
-                    })
-                else {
-                    const newProduct = new Product({ ...products, url: allUrlModels[i]._id });
-                    await newProduct.save().then(() => console.log(`${++count} product is saved.`));
+                    }
                 }
                 
                 if (i < allUrlModels.length-1) {

@@ -7,7 +7,7 @@ import { settings } from '../utils/static'
 import 'antd/dist/reset.css';
 const { RangePicker } = DatePicker;
 
-const MainTable = ({current}) => {
+const MainTable = ({current, getBadgeData}) => {
   
   const columns = settings[current.toString().toLowerCase()].columns
   const tableRef = useRef(null);
@@ -37,6 +37,7 @@ const MainTable = ({current}) => {
           const finalScrapingDate = moment(lastHistoryDate).format("MMM DD YYYY");
           setFinalScrapingDate(finalScrapingDate);
         }
+        getBadgeData(res.data.newdeleteamount);
         // Make sure `res.data.total` correctly represents the total number of items available in the backend
         setPagination(prevPagination => ({
           ...prevPagination,
@@ -59,6 +60,7 @@ const MainTable = ({current}) => {
 
     axios.get(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[1]}`)
       .then(async res => {
+        getBadgeData(res.data.newdeleteamount);
         if (res.data.success) {
           setHistory(res.data.data.history)
           setFinalScrapingDate(moment(res.data.data.history[res.data.data.history.length - 1].createdAt).format("MMM DD YYYY"))

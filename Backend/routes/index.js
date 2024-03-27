@@ -11,6 +11,11 @@ const fabricaRoute = require('./fabrica/fabrica');
 const dixieRoute = require('./dixie/dixie');
 const maslandRoute = require('./masland/masland');
 const andersontuftexRoute = require('./andersontuftex/andersontuftex');
+const wicandersRoute = require('./wicanders/wicanders');
+const shawfloorsRoute = require('./shawfloors/shawfloors');
+const hardwoodRoute = require('./hardwood/hardwood');
+const adorraRoute = require('./adorra/adorra');
+const rebelRoute = require('./rebel/rebel');
 
 const app = express();
 app.use("/prestige",prestigeRoute);
@@ -25,6 +30,11 @@ app.use("/fabrica",fabricaRoute)
 app.use("/dixie",dixieRoute)
 app.use("/masland",maslandRoute)
 app.use("/andersontuftex",andersontuftexRoute)
+app.use("/wicanders",wicandersRoute)
+app.use("/shawfloors",shawfloorsRoute)
+app.use("/hardwood",hardwoodRoute)
+app.use("/adorra",adorraRoute)
+app.use("/rebel",rebelRoute)
 module.exports = app;
 
 
