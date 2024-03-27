@@ -288,7 +288,7 @@ const MainTable = ({current, getBadgeData}) => {
             Scraping History
           </Button>
           <Modal
-            title="History that scrape in Couristan page"
+            title={`History that scrape in ${current} page`}
             centered
             footer="Please use DatePicker Filter Function to see more detail product information"
 
