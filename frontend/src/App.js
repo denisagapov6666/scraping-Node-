@@ -181,7 +181,7 @@ const App = () => {
                 </div>
               </div>
             </Menu.Item>
-            <Menu.Item key="17" style={{ height: "35px", paddingRight: "0px", display: "flex", alignItems: "center" }} icon={<img src='./rebel.jpg' width="18x" alt='rebel' />} onClick={() => changeHeader(16)}>
+            {/* <Menu.Item key="17" style={{ height: "35px", paddingRight: "0px", display: "flex", alignItems: "center" }} icon={<img src='./rebel.jpg' width="18x" alt='rebel' />} onClick={() => changeHeader(16)}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ marginRight: "3px" }}>Rebel</span>
                 <div style={{ alignItems: "right" }}>
@@ -189,7 +189,8 @@ const App = () => {
                   <Badge count={newdeleteamount.deletedadorraAmount} style={{ backgroundColor: "red", borderColor: "red" }} size='small' />
                 </div>
               </div>
-            </Menu.Item>
+              
+            </Menu.Item> */}
 
           </Menu>
         </Sider>
