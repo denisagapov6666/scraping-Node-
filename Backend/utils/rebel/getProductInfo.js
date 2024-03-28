@@ -30,10 +30,14 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
             }
             if (detailTitle.startsWith("Max Broadloom Width:")) {
                 width = detailTitle.split(":")[1].trim();
-            }else if(detailTitle.startsWith("Width:")){
+            }
+            if(detailTitle.startsWith("Width:")){
                 width = detailTitle.split(":")[1].trim();
             }
             if (detailTitle.startsWith("Country Of Origin:")) {
+                origin = detailTitle.split(":")[1].trim();
+            }
+            if (detailTitle.startsWith("Origin:")) {
                 origin = detailTitle.split(":")[1].trim();
             }
             if (detailTitle.startsWith("Pattern Repeat:")) {
@@ -43,32 +47,29 @@ const scrapeData = (url) => new Promise(async (resolve, reject) => {
 
             }
         });
-        
         let products = []
-        const colors = $('.gallery-item-container');
-        let except1 = false;
+        const images = $("img[data-hook = 'gallery-item-image-img']");
+        const colors = $("div[data-hook = 'item-title'] span")
         for (let index = 0; index < colors.length; index++) {
-            const element = colors.eq(index);
-            if (except1 && index === 0) return;
-            const img = $(element).find('picture img').eq(0);
-            const tag = $(element).find('.gallery-item-common-info-outer').eq(0).text().trim() || img.attr('alt');
+            const img = images.eq(index).attr("src");
+            const color = colors.eq(index).text();
             const props = {
                 category:"carpet", 
                 brandName:"Rebel", 
-                productName:`${collection}-${tag}`,
+                productName:`${collection}-${color}`,
                 collection, 
-                color:tag,
+                color,
                 origin,
                 texture,
                 fiberType,
                 patternRepeat,
                 width,
                 site:"rebel",
-                imageUrls:[`${img.attr('src').split('.jpg')[0]}.jpg`]
+                imageUrls:[img]
             }
             products.push(props)
-            if (index === colors.length - 1) resolve(products);
         }
+        resolve(products)
     } catch (error) {
         reject(error);
         console.log('Error fetching URL:', error);

@@ -1,7 +1,12 @@
 const URLModel = require("../models/urls");
+const ProductModel = require("../models/products")
 module.exports = async () => {
-    const newprestigeAmount = await URLModel.countDocuments({ site: "prestige", new: true })
-    const deletedprestigeAmount = await URLModel.countDocuments({ site: "prestige", deleted: true })
+    const newprestige = await URLModel.find({ site: "prestige", new: true })
+    const newprestigeAmount = await ProductModel
+        .countDocuments({ url: { $in: newprestige.map(urlmodel => urlmodel._id) } })
+    const deletedprestige = await URLModel.find({ site: "prestige", deleted: true })
+    const deletedprestigeAmount = await ProductModel
+        .countDocuments({ url: { $in: deletedprestige.map(urlmodel => urlmodel._id) } })
     const newcouristanAmount = await URLModel.countDocuments({ site: "couristan", new: true })
     const deletedcouristanAmount = await URLModel.countDocuments({ site: "couristan", deleted: true })
     const newkayaAmount = await URLModel.countDocuments({ site: "kaya", new: true })
@@ -32,6 +37,13 @@ module.exports = async () => {
     const deletedhardwoodAmount = await URLModel.countDocuments({ site: "hardwood", deleted: true })
     const newadorraAmount = await URLModel.countDocuments({ site: "adorra", new: true })
     const deletedadorraAmount = await URLModel.countDocuments({ site: "adorra", deleted: true })
+
+    const newrebel = await URLModel.find({ site: "rebel", new: true })
+    const newrebelAmount = await ProductModel
+        .countDocuments({ url: { $in: newrebel.map(urlmodel => urlmodel._id) } })
+    const deletedrebel = await URLModel.find({ site: "rebel", deleted: true })
+    const deletedrebelAmount = await ProductModel
+        .countDocuments({ url: { $in: deletedrebel.map(urlmodel => urlmodel._id) } })
     return {
         newprestigeAmount, deletedprestigeAmount,
         newcouristanAmount, deletedcouristanAmount,
@@ -48,7 +60,8 @@ module.exports = async () => {
         newwicandersAmount, deletedwicandersAmount,
         newshawfloorsAmount, deletedshawfloorsAmount,
         newhardwoodAmount, deletedhardwoodAmount,
-        newadorraAmount, deletedadorraAmount
+        newadorraAmount, deletedadorraAmount,
+        newrebelAmount,deletedrebelAmount,
     }
 
 }
