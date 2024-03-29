@@ -320,7 +320,7 @@ const MainTable = ({ current, getBadgeData }) => {
           <Button type="primary" onClick={modalControl} disabled={loading}>
             Scraping History
           </Button>
-          <Button type='primary' onClick={modalControl1} disabled={loading} danger style={{ margin: "10px" }}>Set Cron</Button>
+          <Button type='primary' onClick={modalControl1} disabled={loading} danger style={{ margin: "10px" }}>Setting</Button>
           <Modal
             title={`History that scrape in ${current} page`}
             centered
@@ -342,7 +342,7 @@ const MainTable = ({ current, getBadgeData }) => {
             />
           </Modal>
           <Modal
-            title={`Set Cron Job in ${current} page`}
+            title={`Set Cron Job and Email infromation in ${current} page`}
             centered
             open={modal1Open}
             onCancel={() => setModal1Open(false)}
