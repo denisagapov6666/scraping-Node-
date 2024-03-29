@@ -29,7 +29,7 @@ const MainTable = ({ current, getBadgeData }) => {
   useEffect(() => {
 
     setLoading(true)
-    axios.get(`http://localhost:8081/${settings[current.toString().toLowerCase()].api[0]}`)
+    axios.get(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[0]}`)
       .then(async res => {
         setHistory(res.data.data.history)
         const historyLength = res.data.data.history.length;
@@ -59,7 +59,7 @@ const MainTable = ({ current, getBadgeData }) => {
     setLoading(true);
     info();
 
-    axios.get(`http://localhost:8081/${settings[current.toString().toLowerCase()].api[1]}`)
+    axios.get(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[1]}`)
       .then(async res => {
         getBadgeData(res.data.newdeleteamount);
         if (res.data.success) {
@@ -276,7 +276,7 @@ const MainTable = ({ current, getBadgeData }) => {
   /* eslint-enable no-template-curly-in-string */
 
   const onFinish = (values) => {
-    axios.post(`http://localhost:8081/${settings[current.toString().toLowerCase()].api[2]}`,values)
+    axios.post(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[2]}`,values)
     .then(async res =>{
       if(res.data.message==="success"){
         success("Cron job date and email information are correctly");
