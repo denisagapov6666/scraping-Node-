@@ -18,7 +18,8 @@ export const siteNames = [
   "ShawFloors",
   "HardWood",
   "Adorra",
-  "Rebel"
+  "Rebel",
+  "Mohawk"
 ]
 
 export const settings = {
@@ -138,6 +139,7 @@ export const settings = {
     api: [
       "couristan/get_products_info",
       "couristan/start_scraping",
+      "couristan/cron",
     ]
   },
   prestige: {
@@ -298,6 +300,7 @@ export const settings = {
     api: [
       "prestige/get_products_info",
       "prestige/start_scraping",
+      "prestige/cron",
     ]
   },
   fibreworks: {
@@ -452,6 +455,7 @@ export const settings = {
     api: [
       "fibreworks/get_products_info",
       "fibreworks/start_scraping",
+      "fibreworks/cron",
     ]
   },
   kaya: {
@@ -549,6 +553,7 @@ export const settings = {
     api: [
       "kaya/get_products_info",
       "kaya/start_scraping",
+      "kaya/cron",
     ]
   },
   bloomsburg: {
@@ -710,6 +715,7 @@ export const settings = {
     api: [
       "bloomsburg/get_products_info",
       "bloomsburg/start_scraping",
+      "bloomsburg/cron",
     ]
   },
   harcourt: {
@@ -849,6 +855,7 @@ export const settings = {
     api: [
       "harcourt/get_products_info",
       "harcourt/start_scraping",
+      "harcourt/cron",
     ]
   },
   nourison: {
@@ -987,6 +994,7 @@ export const settings = {
     api: [
       "nourison/get_products_info",
       "nourison/start_scraping",
+      "nourison/cron",
     ]
   },
   kaleen: {
@@ -1125,6 +1133,7 @@ export const settings = {
     api: [
       "kaleen/get_products_info",
       "kaleen/start_scraping",
+      "kaleen/cron",
     ]
   },
   fabrica: {
@@ -1285,6 +1294,7 @@ export const settings = {
     api: [
       "fabrica/get_products_info",
       "fabrica/start_scraping",
+      "fabrica/cron",
     ]
   },
   dixie: {
@@ -1445,6 +1455,7 @@ export const settings = {
     api: [
       "dixie/get_products_info",
       "dixie/start_scraping",
+      "dixie/cron",
     ]
   },
   masland: {
@@ -1605,6 +1616,7 @@ export const settings = {
     api: [
       "masland/get_products_info",
       "masland/start_scraping",
+      "masland/cron",
     ]
   },
   andersontuftex: {
@@ -1737,6 +1749,7 @@ export const settings = {
     api: [
       "andersontuftex/get_products_info",
       "andersontuftex/start_scraping",
+      "andersontuftex/cron",
     ]
   },
   wicanders: {
@@ -1877,6 +1890,7 @@ export const settings = {
     api: [
       "wicanders/get_products_info",
       "wicanders/start_scraping",
+      "wicanders/cron",
     ]
   },
   shawfloors: {
@@ -2030,6 +2044,7 @@ export const settings = {
     api: [
       "shawfloors/get_products_info",
       "shawfloors/start_scraping",
+      "shawfloors/cron",
     ]
   },
   hardwood: {
@@ -2185,6 +2200,7 @@ export const settings = {
     api: [
       "hardwood/get_products_info",
       "hardwood/start_scraping",
+      "hardwood/cron",
     ]
   },
   adorra: {
@@ -2312,6 +2328,7 @@ export const settings = {
     api: [
       "adorra/get_products_info",
       "adorra/start_scraping",
+      "adorra/cron",
     ]
   },
   rebel: {
@@ -2441,6 +2458,130 @@ export const settings = {
     api: [
       "rebel/get_products_info",
       "rebel/start_scraping",
+      "rebel/cron",
+    ]
+  },
+  mohawk: {
+    columns: [
+      {
+        title: 'Product SKU',
+        dataIndex: 'productSku',
+        key: 'productSku',
+        width: 150,
+        render: (text, record) => {
+          const { productSku, url, addRemove } = record;
+          const ribbonText = addRemove === "new" ? "New" : addRemove === "deleted" ? "Removed" : false;
+          const ribbonColor = addRemove === "new" ? "green" : addRemove === "deleted" ? "red" : ""; // Default color
+          return (
+            <>
+              {
+                ribbonText && (
+                  <>
+                    <Badge.Ribbon key="1" style={{ marginTop: "-40px", marginLeft: "-17px" }} color={ribbonColor} text={ribbonText} placement='start'></Badge.Ribbon>
+                  </>
+                )
+              }
+              <a style={{ textTransform: 'uppercase', marginLeft: 20 }} key="2" href={url} target="_blank" rel="noopener noreferrer">{productSku}</a>
+            </>
+          );
+        },
+        fixed: "left",
+        align: "center"
+      },
+      {
+        title: 'Category',
+        width: 100,
+        dataIndex: 'category',
+        key: 'category',
+        align: "center"
+      },
+      {
+        title: 'Brand Name',
+        dataIndex: 'brandName',
+        key: 'brandName',
+        width: 150,
+        align: "center"
+      },
+      {
+        title: 'Collection',
+        dataIndex: 'collection',
+        key: 'collection',
+        width: 150,
+        align: "center"
+      },
+            
+      {
+        title: 'Color',
+        dataIndex: 'color',
+        key: 'color',
+        width: 150,
+        align: "center"
+      },
+      {
+        title: 'Style',
+        dataIndex: 'style',
+        key: 'style',
+        width: 150,
+        align: "center"
+      },
+      {
+        title: 'Origin',
+        dataIndex: 'origin',
+        key: 'origin',
+        width: 150,
+        align: "center"
+      },
+      {
+        title: 'Feature',
+        dataIndex: 'feature',
+        key: 'feature',
+        width: 150,
+        align: "center"
+      },
+      {
+        title: 'Install Method',
+        dataIndex: 'installMethod',
+        key: 'installMethod',
+        width: 150,
+        align: "center"
+      },
+      
+    
+      {
+        title: 'Date',
+        dataIndex: 'date',
+        key: 'date',
+        width: 150,
+        render: date => <span style={{ textTransform: 'uppercase' }}>{moment(date).format("YYYY-MM-DD")}</span>,
+        align: "center"
+      },
+      {
+        title: 'Images',
+        dataIndex: 'imageUrls',
+        key: 'imageUrls',
+        width: 120,
+        render: (imageUrls) => {
+          // Render all images except the first one inside an anchor tag with a unique key
+          return (
+            <div style={{ width: "100px", textAlign: "center", margin: "auto" }}>
+              {imageUrls.slice(0).map((image, index) => (
+                // Use the combination of image URL and index as a unique key
+                <a key={image + index} href={image} target="_blank" rel="noopener noreferrer">
+                  <img width="40px" height="40px" src={image} alt={`product-${index}`} style={{ margin: '3px' }} />
+                </a>
+              ))}
+            </div>
+          );
+        },
+        fixed: "right",
+        align: "center"
+      }
+
+    ],
+    api: [
+      "mohawk/get_products_info",
+      "mohawk/start_scraping",
+      "mohawk/cron",
     ]
   },
 }

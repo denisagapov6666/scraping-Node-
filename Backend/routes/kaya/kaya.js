@@ -5,6 +5,7 @@ const prestigeMiddleware = require("../../middlewares/prestige")
 const router = express.Router();
 
 router.get("/get_products_info", kayaController.getProduct);
+router.post("/cron", kayaController.cron);
 
 router.get("/start_scraping", prestigeMiddleware.isScrapingByOtherUser, kayaController.startScraping)
 

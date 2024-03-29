@@ -10,7 +10,11 @@ const getProduct = async (req, res) => {
 const startScraping = async (req, res) => {
     controller.startScraping(req, res,site,getProductInfo, getUrls)
 }
+const cron = async (req, res) => {
+    controller.cron(req, res,site)
+}
 module.exports = {
     getProduct,
     startScraping,
+    cron
 }

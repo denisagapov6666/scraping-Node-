@@ -16,6 +16,7 @@ const shawfloorsRoute = require('./shawfloors/shawfloors');
 const hardwoodRoute = require('./hardwood/hardwood');
 const adorraRoute = require('./adorra/adorra');
 const rebelRoute = require('./rebel/rebel');
+const mohawkRoute = require('./mohawk/mohawk');
 
 const app = express();
 app.use("/prestige",prestigeRoute);
@@ -35,6 +36,7 @@ app.use("/shawfloors",shawfloorsRoute)
 app.use("/hardwood",hardwoodRoute)
 app.use("/adorra",adorraRoute)
 app.use("/rebel",rebelRoute)
+app.use("/mohawk",mohawkRoute)
 module.exports = app;
 
 

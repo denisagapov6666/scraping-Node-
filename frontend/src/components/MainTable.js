@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, message, Select, Button, Input, DatePicker, Modal } from 'antd';
+import { Table, message, Select, Button, Input, DatePicker, Modal, Form, InputNumber } from 'antd';
 import axios from 'axios';
 import { Excel } from "antd-table-saveas-excel";
 import moment from 'moment';
@@ -7,8 +7,8 @@ import { settings } from '../utils/static'
 import 'antd/dist/reset.css';
 const { RangePicker } = DatePicker;
 
-const MainTable = ({current, getBadgeData}) => {
-  
+const MainTable = ({ current, getBadgeData }) => {
+
   const columns = settings[current.toString().toLowerCase()].columns
   const tableRef = useRef(null);
 
@@ -32,7 +32,7 @@ const MainTable = ({current, getBadgeData}) => {
       .then(async res => {
         setHistory(res.data.data.history)
         const historyLength = res.data.data.history.length;
-        if(historyLength>0){
+        if (historyLength > 0) {
           const lastHistoryDate = res.data.data.history[historyLength - 1].createdAt;
           const finalScrapingDate = moment(lastHistoryDate).format("MMM DD YYYY");
           setFinalScrapingDate(finalScrapingDate);
@@ -127,7 +127,7 @@ const MainTable = ({current, getBadgeData}) => {
     // Save the Excel file
     excel.saveAs(`${current}.xlsx`);
   };
-  
+
   const changeFilter = (filter) => {
     let filteredData = originData;
     if (filter === "new") {
@@ -222,6 +222,7 @@ const MainTable = ({current, getBadgeData}) => {
     });
   };
   const [modal2Open, setModal2Open] = useState(false);
+  const [modal1Open, setModal1Open] = useState(false);
   const historyShow = () => {
     const historyData = [];
     for (let i = 0; i < history.length; i++) {
@@ -248,12 +249,45 @@ const MainTable = ({current, getBadgeData}) => {
     setModal2Open(true);
     historyShow()
   }
+  const modalControl1 = () => {
+    setModal1Open(true);
+  }
+  const layout = {
+    labelCol: {
+      span: 6,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+  };
+
+  /* eslint-disable no-template-curly-in-string */
+  const validateMessages = {
+    required: '${label} is required!',
+    types: {
+      email: '${label} is not a valid email!',
+      number: '${label} is not a valid number!',
+    },
+    number: {
+      range: '${label} must be between ${min} and ${max}',
+    },
+  };
+  /* eslint-enable no-template-curly-in-string */
+
+  const onFinish = (values) => {
+    axios.post(`https://scrapingback.onrender.com/${settings[current.toString().toLowerCase()].api[2]}`,values)
+    .then(async res =>{
+      if(res.data.message==="success"){
+        success("Cron job date and email information are correctly");
+      }
+    })
+  };
   return (
     <>
       {
         contextHolder
       }
-      <div style={{ position: "fixed", zIndex: "100", top: "64px", padding: "0px 20px", justifyContent: "space-between", backgroundColor: "white", display: "flex", width: "87vw" }}>
+      <div style={{ position: "fixed", zIndex: "100", top: "64px", padding: "0px 20px", justifyContent: "space-between", backgroundColor: "white", display: "flex", width: "86vw" }}>
         <div style={{ display: "flex" }}>
           <div>
             <Select
@@ -283,10 +317,10 @@ const MainTable = ({current, getBadgeData}) => {
         <div>
           <Button type='primary' disabled={loading} onClick={handleDownloadClick}>Download to Excel</Button>
           <Button type='primary' disabled={loading} style={{ margin: "0px 10px", width: 130 }} onClick={handleStartScraping}>Start Scraping</Button>
-          {/* <Button type='primary' disabled={loading} danger style={{ margin: "10px" }} onClick={formatData}>Delete Data</Button> */}
           <Button type="primary" onClick={modalControl} disabled={loading}>
             Scraping History
           </Button>
+          <Button type='primary' onClick={modalControl1} disabled={loading} danger style={{ margin: "10px" }}>Set Cron</Button>
           <Modal
             title={`History that scrape in ${current} page`}
             centered
@@ -306,6 +340,76 @@ const MainTable = ({current, getBadgeData}) => {
               ]}
               pagination={false} // Disable pagination if all data fits in the modal
             />
+          </Modal>
+          <Modal
+            title={`Set Cron Job in ${current} page`}
+            centered
+            open={modal1Open}
+            onCancel={() => setModal1Open(false)}
+            footer={null}
+            align="center"
+          >
+            <label>Set Email</label>
+            <Form
+              {...layout}
+              name="nest-messages"
+              onFinish={onFinish}
+              style={{
+                maxWidth: 600,
+              }}
+              validateMessages={validateMessages}
+            >
+              <Form.Item
+                name={['from', 'email']}
+                label="From"
+                rules={[
+                  {
+                    type: 'email',
+                    required: true, // Add required rule for email 'From'
+                    message: 'Please input a valid email address',
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name={['to', 'email']}
+                label="To"
+                rules={[
+                  {
+                    type: 'email',
+                    required: true, // Add required rule for email 'From'
+                    message: 'Please input a valid email address',
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <label>Set Cron Job</label>
+              <Form.Item
+                name={['cron', 'cron']}
+                label="Step"
+              >
+                <Select
+                  style={{ width: "100%" }}
+                  options={[
+                    { value: '1', label: 'Once a Day' },
+                    { value: '2', label: 'Once a Week' },
+                    { value: '3', label: 'Once a Month' },
+                  ]}
+                />
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  ...layout.wrapperCol,
+                  offset: 19,
+                }}
+              >
+                <Button type="primary" htmlType="submit">
+                  Save
+                </Button>
+              </Form.Item>
+            </Form>
           </Modal>
         </div>
 

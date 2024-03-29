@@ -3,7 +3,7 @@ const getUrls = require('../utils/prestige/getUrls');
 const CronJob = require("./cronjob");
 
 const site = "prestige";
-const schedule = "0 13 * * 6";
+const schedule = "0 13";
 
 const prestigeCronJob = () => {
     CronJob.CronJob(site,schedule, getProductInfo,getUrls)

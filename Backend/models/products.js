@@ -128,7 +128,12 @@ const ProductSchema = new Schema({
     coverage: {
         type: String
     },
-
+    feature:{
+        type:String
+    },
+    installMethod:{
+        type:String
+    },
     removed: {
         type: Boolean,
     },

@@ -3,7 +3,7 @@ const getUrls = require('../utils/hardwood/getUrls');
 const CronJob = require("./cronjob");
 
 const site = "hardwood";
-const schedule = "0 8 * * 6";
+const schedule = "0 8";
 
 const hardwoodCronJob = () => {
     CronJob.CronJob(site,schedule, getProductInfo,getUrls)

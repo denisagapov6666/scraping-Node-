@@ -3,7 +3,7 @@ const getUrls = require('../utils/wicanders/getUrls');
 const CronJob = require("./cronjob");
 
 const site = "wicanders";
-const schedule = "0 16 * * 6";
+const schedule = "0 16";
 
 const wicandersCronJob = () => {
     CronJob.CronJob(site,schedule, getProductInfo,getUrls)

@@ -1,14 +1,14 @@
-const getProductInfo = require('../utils/adorra/getProductInfo');
-const getUrls = require('../utils/adorra/getUrls');
+// const getProductInfo = require('../utils/mohawk/getProductInfo');
+const getUrls = require('../utils/mohawk/getUrls');
 
 const controller = require('./controller');
-const site = "adorra";
+const site = "mohawk";
 
 const getProduct = async (req, res) => {
     controller.getProduct(req, res,site)
 }
 const startScraping = async (req, res) => {
-    controller.startScraping(req, res,site,getProductInfo, getUrls)
+    controller.startScraping1(req, res,site, getUrls)
 }
 const cron = async (req, res) => {
     controller.cron(req, res,site)

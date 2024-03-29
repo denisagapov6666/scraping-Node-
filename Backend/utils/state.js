@@ -37,6 +37,8 @@ module.exports = async () => {
     const deletedhardwoodAmount = await URLModel.countDocuments({ site: "hardwood", deleted: true })
     const newadorraAmount = await URLModel.countDocuments({ site: "adorra", new: true })
     const deletedadorraAmount = await URLModel.countDocuments({ site: "adorra", deleted: true })
+    const newmohawkAmount = await URLModel.countDocuments({ site: "mohawk", new: true })
+    const deletedmohawkAmount = await URLModel.countDocuments({ site: "mohawk", deleted: true })
 
     const newrebel = await URLModel.find({ site: "rebel", new: true })
     const newrebelAmount = await ProductModel
@@ -62,6 +64,7 @@ module.exports = async () => {
         newhardwoodAmount, deletedhardwoodAmount,
         newadorraAmount, deletedadorraAmount,
         newrebelAmount,deletedrebelAmount,
+        newmohawkAmount,deletedmohawkAmount,
     }
 
 }

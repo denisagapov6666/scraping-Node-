@@ -5,6 +5,7 @@ const prestigeMiddleware = require("../../middlewares/prestige")
 const router = express.Router();
 
 router.get("/get_products_info", rebelController.getProduct);
+router.post("/cron", rebelController.cron);
 
 router.get("/start_scraping", prestigeMiddleware.isScrapingByOtherUser, rebelController.startScraping)
 

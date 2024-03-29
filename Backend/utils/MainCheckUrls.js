@@ -43,6 +43,35 @@ const checkUrl = (site,newUrls) => new Promise(async (resolve, reject) => {
         console.error('Error updating URLs in database:', error);
     }
 })
+const checkUrl1 = (site, count,newUrls) => new Promise(async (resolve, reject) => {
+    try {
+        const allUrlModels = await URLModel.find({site});
+        const allUrls = allUrlModels.map(urlModel => urlModel.url);
+
+        const removedUrls = allUrls.filter(url => !newUrls.includes(url));
+
+        let removedProductsLength = 0;
+        if(removedUrls.length>0){
+            // Update existing URLs in the database
+            await Promise.all(allUrlModels.map(async urlModel => {
+                if (removedUrls.includes(urlModel.url)) {
+                    const products = await ProductModel.find({ url: urlModel._id });
+                    removedProductsLength += products.length;
+                    await URLModel.findByIdAndUpdate(urlModel._id, { new: false, deleted: true });
+                }
+            }));
+        }
+        if(count>0||removedUrls.length>0){
+            await new HistoryModel({site}).save()
+        }
+
+
+        resolve({removed:removedProductsLength,isremoved:removedUrls.length,isadded:count})
+    } catch (error) {
+        console.error('Error updating URLs in database:', error);
+    }
+})
 module.exports = {
-    checkUrl
+    checkUrl,
+    checkUrl1
 }
