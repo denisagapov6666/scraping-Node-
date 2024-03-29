@@ -322,7 +322,7 @@ const MainTable = ({ current, getBadgeData }) => {
           <Button type="primary" onClick={modalControl} disabled={loading}>
             Scraping History
           </Button>
-          <Button type='primary' onClick={modalControl1} disabled={loading} danger style={{ margin: "10px" }}>Setting</Button>
+          {/* <Button type='primary' onClick={modalControl1} disabled={loading} danger style={{ margin: "10px" }}>Setting</Button> */}
           <Modal
             title={`History that scrape in ${current} page`}
             centered
