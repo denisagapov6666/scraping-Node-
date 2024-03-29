@@ -7,8 +7,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Badge} from 'antd';
-import { Scrollbars } from 'react-custom-scrollbars';
+import { Layout, Menu, Badge, Button } from 'antd';
 
 import { siteNames } from './utils/static';
 
@@ -33,7 +32,6 @@ const App = () => {
       <Router> {/* Wrap the Sider content with Router */}
         <Sider className="site-layout-sider" trigger={null} collapsible collapsed={collapsed}>
           <div className="logo" />
-          <Scrollbars>
             <Menu
               theme="dark"
               mode="inline"
@@ -48,7 +46,6 @@ const App = () => {
                   </div>
                 </div>
               </Menu.Item>
-
               <Menu.Item key="2" style={{ display: "flex", alignItems: "center" }} icon={<img src='./couristan.png' width="20px" alt='couristan' />} onClick={() => changeHeader(1)}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span style={{ marginRight: "3px" }}>Couristan</span>
@@ -204,7 +201,6 @@ const App = () => {
               </Menu.Item>
             </Menu>
 
-          </Scrollbars>
         </Sider>
         <Layout style={{ backgroundColor: 'white' }}>
           <Header className="site-layout-header" style={{ padding: 0, fontSize: "20px", backgroundColor: "grey" }}>
